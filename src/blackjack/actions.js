@@ -1,9 +1,11 @@
-const actions = {
-	'HIT': 'HIT',
-	'STAND': 'STAND',
+'use strict';
 
-	'DOUBLE_DOWN': 'DOUBLE_DOWN',
-	'SPLIT': 'SPLIT'
+const actions = {
+  'HIT': 'HIT',
+  'STAND': 'STAND',
+
+  'DOUBLE_DOWN': 'DOUBLE_DOWN',
+  'SPLIT': 'SPLIT'
 };
 
-exports default actions;
+module.exports = actions;

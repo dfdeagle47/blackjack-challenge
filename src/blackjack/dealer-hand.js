@@ -1,11 +1,13 @@
 'use strict';
 
-import actions from './actions';
-import Hand from './hand';
+const actions = require('./actions');
+const Hand = require('./hand');
 
 class DealerHand extends Hand {
 
   constructor (s17, cards) {
+    super(s17, cards);
+
     this.s17 = s17;
     this.cards = cards;
   }
@@ -57,8 +59,7 @@ class DealerHand extends Hand {
       this.hasHard16OrLower()
     ) {
       nextActions.push(actions.HIT);
-    }
-    else {
+    } else {
       nextActions.push(actions.STAND);
     }
 
@@ -67,4 +68,4 @@ class DealerHand extends Hand {
 
 }
 
-exports default Hand;
+module.exports = DealerHand;

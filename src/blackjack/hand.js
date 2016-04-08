@@ -1,6 +1,6 @@
 'use strict';
 
-import actions from './actions';
+const actions = require('./actions');
 
 class Hand {
 
@@ -23,40 +23,54 @@ class Hand {
     return this.bet;
   }
 
-  setBet (bet) {
-    return (this.bet = bet, bet);
+  addToBet (bet) {
+    return (this.bet += bet);
   }
 
   setHasDoubledDown (hasDoubledDown) {
     this.hasDoubleDowned = hasDoubledDown;
   }
 
-  getCombinations () {
-    return this
-      .cards
-      .reduce(
-        (combinations, card) => {
-          return combinations
-            .reduce(
-              (combinations, combination) => {
-                return combinations.concat(
-                  combination.concat(
-                    card
-                      .getValues()
-                      .map(combination => combination.concat(value))
-                    )
-                  );
-              },
-              []
-            );
-        },
-        []
-      ); 
+  getCombinations (cards) {
+    const card = cards[0];
+
+    if (cards.length === 1) {
+      return card;
+    }
+
+    const remainingCombinations = this.getCombinations(
+      cards.slice(1)
+    );
+    const combinations = [];
+    const ilen = remainingCombinations.length;
+    const jlen = card.length;
+    let i = 0;
+    let j = 0;
+
+    for (; i < ilen; i++) {
+      for (j = 0; j < jlen; j++) {
+        combinations.push(
+          (
+              Array.isArray(
+                card[j]
+              )
+              ? card[j]
+              : [ card[j] ]
+          ).concat(
+            remainingCombinations[i]
+          )
+        );
+      }
+    }
+
+    return combinations;
   }
 
   getTotals () {
     return this
-      .getCombinations()
+      .getCombinations(
+        this.cards
+      )
       .map(combination => {
         return combination
           .reduce(
@@ -104,7 +118,7 @@ class Hand {
           total === 9 ||
           total === 10 ||
           total === 11
-        )
+        ))
         .length !== 0
     );
   }
@@ -140,4 +154,4 @@ class Hand {
 
 }
 
-exports default Hand;
+module.exports = Hand;

@@ -1,8 +1,8 @@
 'use strict';
 
-import Player from './player';
-import Hand from './hand';
-import Deck from './deck';
+const Player = require('./player');
+const Hand = require('./hand');
+const Deck = require('./deck');
 
 class Table {
 
@@ -25,15 +25,15 @@ class Table {
   getPlayerByIpAddress (ipAddress) {
     return this
       .players
-      .filter(player => player.ipAddress === ipAddress)
-      [0];
+      .filter(player => player.ipAddress === ipAddress)[0];
   }
 
   playerCount () {
     return this.players.length;
   }
 
-  addPlayer (player) {
+  addPlayer (ipAddress) {
+    const player = new Player(ipAddress, this.playerBankroll);
     return (this.players.unshift(player), player);
   }
 
@@ -54,8 +54,25 @@ class Table {
     }
   }
 
-  doHit (player, hand, action) {
-    const card = this.deck.pop();
+  doDealFirstHand (player, bet) {
+    const card1 = this.deck.popCard();
+    const card2 = this.deck.popCard();
+
+    player.subtractFromBankroll(bet);
+
+    const hand = new Hand(
+      [
+        card1,
+        card2
+      ],
+      bet
+    );
+
+    player.addHand(hand);
+  }
+
+  doHit (player, hand) {
+    const card = this.deck.popCard();
 
     hand.addCard(card);
   }
@@ -65,8 +82,12 @@ class Table {
   doDoubleDown (player, hand) {
     hand.setHasDoubledDown(true);
 
-    hand.setBet(
-      hand.getBet() * 2
+    player.subtractFromBankroll(
+      hand.getBet()
+    );
+
+    hand.addToBet(
+      hand.getBet()
     );
 
     this.doHit(player, hand);
@@ -74,6 +95,10 @@ class Table {
 
   doSplit (player, hand) {
     const secondCard = hand.popCard();
+
+    player.subtractFromBankroll(
+      hand.getBet()
+    );
 
     let newHand = new Hand(
       [secondCard],
@@ -88,4 +113,4 @@ class Table {
 
 }
 
-exports default Table;
+module.exports = Table;

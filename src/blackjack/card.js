@@ -25,4 +25,4 @@ class Card {
 
 }
 
-exports default Card;
+module.exports = Card;

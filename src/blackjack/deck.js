@@ -1,6 +1,6 @@
 'use strict';
 
-import Card from './card';
+const Card = require('./card');
 
 class Deck {
 
@@ -12,6 +12,10 @@ class Deck {
         this.numDecks
       )
     );
+  }
+
+  popCard () {
+    return this.cards.pop();
   }
 
   cardCount () {
@@ -36,4 +40,4 @@ class Deck {
 
 }
 
-exports default Deck;
+module.exports = Deck;

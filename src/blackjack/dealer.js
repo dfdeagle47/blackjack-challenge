@@ -1,9 +1,13 @@
 'use strict';
 
-import Player from './player';
+const Player = require('./player');
 
 class Dealer extends Player {
 
+  constructor (ipAddress, bankroll) {
+    super(ipAddress, bankroll);
+  }
+
 }
 
-exports default Dealer;
+module.exports = Dealer;

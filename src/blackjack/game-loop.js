@@ -1,6 +1,6 @@
 'use strict';
 
-import Table from './table';
+const Table = require('./table');
 
 class GameLoop {
 
@@ -16,29 +16,43 @@ class GameLoop {
     this.handIndex = 0;
   }
 
-  resetGame () {
+  join (ipAddress) {
+    this.table.addPlayer(ipAddress);
+  }
+
+  reset () {
     this.playerIndex = 0;
     this.handIndex = 0;
   }
 
   next () {
     if (this.playerIndex === this.table.playerCount()) {
-      this.resetGame();
+      return this.reset();
     }
 
-    let player = this.getPlayerByIndex(
-      this.playerIndex
-    );
-
-    if (this.handIndex === this.player.handCount()) {
-      player = this.getPlayerByIndex(
-        this.playerIndex + 1
+    let player = this
+      .table
+      .getPlayerByIndex(
+        this.playerIndex
       );
+
+    if (player.handCount() === 0) {
+      this
+        .table
+        .doDealFirstHand(player);
+    }
+
+    if (this.handIndex === player.handCount()) {
+      player = this
+        .table
+        .getPlayerByIndex(
+          this.playerIndex + 1
+        );
 
       this.handIndex = 0;
     }
 
-    const hand = this.getHandByIndex(
+    const hand = player.getHandByIndex(
       this.handIndex
     );
 
@@ -50,9 +64,8 @@ class GameLoop {
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
           throw new Error('Invalid action');
-        }
-        else {
-          table.doAction(
+        } else {
+          this.table.doAction(
             player,
             hand,
             chosenAction
@@ -62,17 +75,17 @@ class GameLoop {
         this.playerIndex += 1;
         this.handIndex += 1;
 
-        return next();
+        return this.next();
       })
       .catch(e => {
         player.removeHandByIndex(
           this.handIndex
         );
 
-        return next();
+        return this.next();
       });
   }
 
 }
 
-exports default GameLoop;
+module.exports = GameLoop;

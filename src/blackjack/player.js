@@ -25,6 +25,21 @@ class Player {
     return this.hands.length;
   }
 
+  addToBankroll (bet) {
+    return (this.bankroll += bet);
+  }
+
+  subtractFromBankroll (bet) {
+    return (this.bankroll -= bet);
+  }
+
+  askPlayer (actions) {
+    console.log('ASK_PLAYER');
+    console.log('actions=', actions);
+
+    return Promise.resolve('HIT');
+  }
+
 }
 
-exports default Player;
+module.exports = Player;
