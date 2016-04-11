@@ -1,6 +1,7 @@
 'use strict';
 
 const actions = require('./actions');
+const states = require('./states');
 
 class Hand {
 
@@ -9,6 +10,7 @@ class Hand {
     this.bet = bet;
 
     this.hasDoubledDown = false;
+    this.state = states.PENDING;
   }
 
   addCard (card) {
@@ -29,6 +31,14 @@ class Hand {
 
   setHasDoubledDown (hasDoubledDown) {
     this.hasDoubleDowned = hasDoubledDown;
+  }
+
+  getState (state) {
+    return this.state;
+  }
+
+  setState (state) {
+    this.state = state;
   }
 
   getCombinations (cards) {
@@ -69,7 +79,9 @@ class Hand {
   getTotals () {
     return this
       .getCombinations(
-        this.cards
+        this
+          .cards
+          .map(card => card.getValues())
       )
       .map(combination => {
         return combination
@@ -80,23 +92,34 @@ class Hand {
       });
   }
 
+  getBestTotal () {
+    return this
+      .getTotals()
+      .filter(
+        total => total > 21
+      )
+      .sort(
+        (total1, total2) => total2 - total1
+      )[0];
+  }
+
   hasBust () {
     return this
       .getTotals()
       .filter(total => total < 21)
-      .length !== 0;
+      .length === 0;
   }
 
-  hasBlackJack () {
+  hasBlackjack () {
     return this
       .getTotals()
       .filter(total => total === 21)
       .length !== 0;
   }
 
-  hasNaturalBlackJack () {
+  hasNaturalBlackjack () {
     return (
-      this.hasBlackJack() &&
+      this.hasBlackjack() &&
       this.cards.length === 2
     );
   }
@@ -112,6 +135,7 @@ class Hand {
   canDoubleDown () {
     return (
       this.hasDoubledDown === false &&
+      this.cards.length === 2 &&
       this
         .getTotals()
         .filter(total => (
@@ -133,23 +157,40 @@ class Hand {
   getNextActions () {
     const nextActions = [];
 
-    if (this.canHit()) {
-      nextActions.push(actions.HIT);
-    }
-
-    if (this.canStand()) {
+    if (this.hasBust()) {
       nextActions.push(actions.STAND);
-    }
+    } else if (this.hasBlackjack()) {
+      nextActions.push(actions.STAND);
+    } else {
+      if (this.canHit()) {
+        nextActions.push(actions.HIT);
+      }
 
-    if (this.canDoubleDown()) {
-      nextActions.push(actions.DOUBLE_DOWN);
-    }
+      if (this.canStand()) {
+        nextActions.push(actions.STAND);
+      }
 
-    if (this.canSplit()) {
-      nextActions.push(actions.SPLIT);
+      if (this.canDoubleDown()) {
+        nextActions.push(actions.DOUBLE_DOWN);
+      }
+
+      if (this.canSplit()) {
+        nextActions.push(actions.SPLIT);
+      }
     }
 
     return nextActions;
+  }
+
+  serializeForPlayers () {
+    return {
+      bet: this.bet,
+      cards: this
+        .cards
+        .map(
+          card => card.serializeForPlayers()
+        )
+    };
   }
 
 }

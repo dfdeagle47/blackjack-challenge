@@ -1,6 +1,10 @@
 'use strict';
 
+const actions = require('./actions');
+const states = require('./states');
+const DealerPlayer = require('./dealer-player');
 const Player = require('./player');
+const DealerHand = require('./dealer-hand');
 const Hand = require('./hand');
 const Deck = require('./deck');
 
@@ -12,10 +16,21 @@ class Table {
     this.dealerBankroll = dealerBankroll;
     this.playerBankroll = playerBankroll;
 
-    this.players = [];
+    this.dealer = new DealerPlayer(true, 1000 * 1000);
+    this.players = [
+      this.dealer
+    ];
 
     this.playerIndex = 0;
     this.handIndex = 0;
+  }
+
+  getPlayers () {
+    return this.players.slice(0, -1);
+  }
+
+  getDealer () {
+    return this.players[this.players.length - 1];
   }
 
   getPlayerByIndex (index) {
@@ -39,18 +54,20 @@ class Table {
 
   doAction (player, hand, action) {
     switch (action) {
-      case action.HIT:
+      case actions.HIT:
         this.doHit(player, hand);
         break;
-      case action.STAND:
+      case actions.STAND:
         this.doStand(player, hand);
         break;
-      case action.DOUBLE_DOWN:
+      case actions.DOUBLE_DOWN:
         this.doDoubleDown(player, hand);
         break;
-      case action.SPLIT:
+      case actions.SPLIT:
         this.doSplit(player, hand);
         break;
+      default:
+        throw new Error('Unknown action ' + action);
     }
   }
 
@@ -58,15 +75,27 @@ class Table {
     const card1 = this.deck.popCard();
     const card2 = this.deck.popCard();
 
-    player.subtractFromBankroll(bet);
+    let hand = null;
 
-    const hand = new Hand(
-      [
-        card1,
-        card2
-      ],
-      bet
-    );
+    if (player instanceof DealerPlayer) {
+      hand = new DealerHand(
+        [
+          card1,
+          card2
+        ],
+        this.s17
+      );
+    } else {
+      player.subtractFromBankroll(bet);
+
+      hand = new Hand(
+        [
+          card1,
+          card2
+        ],
+        bet
+      );
+    }
 
     player.addHand(hand);
   }
@@ -77,7 +106,9 @@ class Table {
     hand.addCard(card);
   }
 
-  doStand (player, hand) {}
+  doStand (player, hand) {
+    hand.setState(states.STAND);
+  }
 
   doDoubleDown (player, hand) {
     hand.setHasDoubledDown(true);
@@ -109,6 +140,70 @@ class Table {
 
     this.doHit(player, hand);
     this.doHit(player, newHand);
+  }
+
+  doCompareHands (dealer, dealerHand, player, playerHand) {
+    const playerHandTotal = playerHand.getBestTotal();
+    const dealerHandTotal = dealerHand.getBestTotal();
+
+    if (playerHand.hasNaturalBlackjack()) {
+      playerHand.setState(
+          states.WIN
+      );
+      player.addToBankroll(
+        playerHand.getBet() * 2.5
+      );
+      dealer.addToBankroll(
+        -1 * playerHand.getBet() * 1.5
+      );
+    } else if (dealerHand.hasNaturalBlackjack()) {
+      playerHand.setState(
+          states.LOSE
+      );
+      dealer.addToBankroll(
+        playerHand.getBet()
+      );
+    } else if (playerHandTotal > dealerHandTotal) {
+      playerHand.setState(
+          states.WIN
+      );
+      player.addToBankroll(
+        playerHand.getBet() * 2
+      );
+      dealer.addToBankroll(
+        -1 * playerHand.getBet()
+      );
+    } else if (playerHandTotal === dealerHandTotal) {
+      playerHand.setState(
+          states.DRAW
+      );
+      player.addToBankroll(
+        playerHand.getBet()
+      );
+    } else if (playerHandTotal < dealerHandTotal) {
+      playerHand.setState(
+          states.LOSE
+      );
+      dealer.addToBankroll(
+        playerHand.getBet()
+      );
+    }
+  }
+
+  serializeForPlayers (playerIndex, handIndex, nextActions) {
+    return {
+      dealer: this
+        .getDealer()
+        .serializeForPlayers(),
+      players: this
+        .getPlayers()
+        .map(
+          player => player.serializeForPlayers()
+        ),
+      playerIndex: playerIndex,
+      handIndex: handIndex,
+      moves: nextActions
+    };
   }
 
 }

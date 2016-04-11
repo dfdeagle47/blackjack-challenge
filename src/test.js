@@ -10,4 +10,6 @@ var gameLoop = new GameLoop(
 
 gameLoop.join('127.0.0.1');
 
-gameLoop.next();
+gameLoop.start();
+
+// gameLoop.next();

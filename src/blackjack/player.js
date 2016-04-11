@@ -9,6 +9,10 @@ class Player {
     this.hands = [];
   }
 
+  getHands () {
+    return this.hands;
+  }
+
   addHand (hand) {
     return (this.hands.push(hand), hand);
   }
@@ -34,18 +38,32 @@ class Player {
   }
 
   triggerGameStart () {
-    throw new Error('START');
+    console.log('PLAYER_START');
+    return Promise.resolve(50);
   }
 
   triggerHandActions (actions) {
     console.log('ASK_PLAYER');
     console.log('actions=', actions);
 
-    return Promise.resolve('HIT');
+    return Promise.resolve(actions[0]);
   }
 
   triggerGameEnd () {
-    throw new Error('END');
+    console.log('PLAYER_END');
+    return Promise.resolve();
+  }
+
+  serializeForPlayers () {
+    return {
+      ipAddress: this.ipAddress,
+      bankroll: this.bankroll,
+      hands: this
+        .hands
+        .map(
+          hand => hand.serializeForPlayers()
+        )
+    };
   }
 
 }

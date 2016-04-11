@@ -5,11 +5,11 @@ const Hand = require('./hand');
 
 class DealerHand extends Hand {
 
-  constructor (s17, cards) {
-    super(s17, cards);
+  constructor (cards, s17) {
+    super(cards, null);
 
-    this.s17 = s17;
     this.cards = cards;
+    this.s17 = s17;
   }
 
   hasS17Rule () {
@@ -18,7 +18,11 @@ class DealerHand extends Hand {
 
   hasSoft17OrLower () {
     return this
-      .getCombinations()
+      .getCombinations(
+        this
+          .cards
+          .map(card => card.getValues())
+      )
       .filter(function (combination) {
         return (
           combination
@@ -34,7 +38,11 @@ class DealerHand extends Hand {
 
   hasHard16OrLower () {
     return this
-      .getCombinations()
+      .getCombinations(
+        this
+          .cards
+          .map(card => card.getValues())
+      )
       .filter(function (combination) {
         return (
           combination

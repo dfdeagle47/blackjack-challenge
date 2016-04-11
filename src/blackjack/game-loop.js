@@ -1,5 +1,7 @@
 'use strict';
 
+const Promise = require('bluebird');
+const states = require('./states');
 const Table = require('./table');
 
 class GameLoop {
@@ -22,33 +24,47 @@ class GameLoop {
   }
 
   start () {
-    this.playerIndex = 0;
-    this.handIndex = 0;
-    this.started = false;
+    this.started = true;
 
-    return Promise.resolve()
+    return this
       .triggerGameStart()
       .then(
-        () => {
-          
-        }
+        () => this.triggerPlayersActions()
+      )
+      .then(
+        () => this.compareHands()
       )
       .then(
         () => this.triggerGameEnd()
-      );
+      )
+      .then(
+        () => {
+          this.started = false;
+        }
+      )
+      .catch(e => console.log(e, e.stack));
   }
 
   triggerGameStart () {
     this.started = false;
 
     return Promise
-      .all(
+      .map(
         this
           .table
-          .players
-          .map(
-            player => player.triggerGameStart()
-          )
+          .players,
+        player => {
+          return player
+            .triggerGameStart()
+            .then(bet => {
+              this
+                .table
+                .doDealFirstHand(
+                  player,
+                  bet
+                );
+            });
+        }
       );
   }
 
@@ -56,11 +72,13 @@ class GameLoop {
     return Promise
       .each(
         Array.from(
-          this
-            .table
-            .playerCount()
-            .keys()
-          ),
+          new Array(
+            this
+              .table
+              .playerCount()
+          )
+          .keys()
+        ),
         (playerIndex) => {
           return this.triggerPlayerActions(playerIndex);
         }
@@ -77,14 +95,16 @@ class GameLoop {
          * Just doing a while loop around pending hands a restart at 0 should wokr.
          */
         Array.from(
-          this
-            .table
-            .getPlayerByIndex(
-              playerIndex
-            )
-            .handCount()
-            .keys()
-          ),
+          new Array(
+            this
+              .table
+              .getPlayerByIndex(
+                playerIndex
+              )
+              .handCount()
+          )
+          .keys()
+        ),
         (handIndex) => {
           return this.triggerHandActions(playerIndex, handIndex);
         }
@@ -99,23 +119,36 @@ class GameLoop {
       );
 
     const hand = player.getHandByIndex(
-      this.handIndex
+      handIndex
     );
 
     const nextActions = hand.getNextActions();
 
+    console.log(
+      require('util').inspect(
+        this
+          .table
+          .serializeForPlayers(playerIndex, handIndex, nextActions),
+        {
+          colors: true,
+          depth: 100
+        }
+      )
+    );
+
+    if (hand.getState() === states.STAND) {
+      return null;
+    }
+
     return player
-      .askPlayer(
+      .triggerHandActions(
         nextActions
       )
       .then(chosenAction => {
-        console.log('++5');
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
-          console.log('++6');
           throw new Error('Invalid action');
         } else {
-          console.log('++7');
           this.table.doAction(
             player,
             hand,
@@ -123,35 +156,77 @@ class GameLoop {
           );
         }
 
-        console.log('++8', player.hands[0]);
-
-        if (hand.status === 'pending') {
-          return this.triggerHandActions(
-            playerIndex,
-            handIndex
-          );
-        }
+        this.triggerHandActions(
+          playerIndex,
+          handIndex
+        );
       })
       .catch(e => {
-        console.log('++9');
         player.removeHandByIndex(
-          this.handIndex
+          handIndex
         );
       });
   }
 
-  triggerGameEnd () {
-    this.started = false;
+  compareHands () {
+    const dealer = this.table.getDealer();
+    const dealerHand = dealer.getHandByIndex(0);
 
+    this
+      .table
+      .getPlayers()
+      .forEach(
+        player => {
+          player
+            .getHands()
+            .forEach(
+              hand => {
+                this
+                  .table
+                  .doCompareHands(
+                    dealer,
+                    dealerHand,
+                    player,
+                    hand
+                  );
+              }
+            );
+        }
+      );
+  }
+
+  triggerGameEnd () {
     return Promise
-      .all(
+      .map(
         this
           .table
-          .players
-          .map(
-            player => player.triggerGameEnd()
-          )
+          .players,
+        player => player.triggerGameEnd
       );
+  }
+
+  serializeState (dealer, dealerHand, player, playerHand) {
+    return {
+      players: this
+        .getPlayers()
+        .map(
+          player => player
+            .getHands()
+            .map(
+              hand => {
+                return hand
+                  .map(
+                    card => {
+                      return {
+                        suit: card.getSuit(),
+                        rank: card.getRank()
+                      };
+                    }
+                  );
+              }
+            )
+        )
+    };
   }
 
 }
