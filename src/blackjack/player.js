@@ -33,11 +33,19 @@ class Player {
     return (this.bankroll -= bet);
   }
 
-  askPlayer (actions) {
+  triggerGameStart () {
+    throw new Error('START');
+  }
+
+  triggerHandActions (actions) {
     console.log('ASK_PLAYER');
     console.log('actions=', actions);
 
     return Promise.resolve('HIT');
+  }
+
+  triggerGameEnd () {
+    throw new Error('END');
   }
 
 }
