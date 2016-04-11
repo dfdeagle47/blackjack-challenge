@@ -12,8 +12,8 @@ class DealerPlayer extends Player {
     return Promise.resolve(null);
   }
 
-  triggerHandActions (actions) {
-    return Promise.resolve(actions[0]);
+  triggerHandActions (state) {
+    return Promise.resolve(state.moves[0]);
   }
 
   triggerGameEnd () {

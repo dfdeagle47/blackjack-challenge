@@ -57,9 +57,9 @@ function renderPlayers (players, playerIndex, handIndex) {
   }).join('\n\n');
 }
 
-function renderState (turn) {
-  var players = turn.players || [];
-  return renderPlayers(players, turn.playerIndex, turn.handIndex);
+function renderState (state) {
+  var players = state.players || [];
+  return renderPlayers(players, state.playerIndex, state.handIndex);
 }
 
 module.exports = (name, options) => {
@@ -82,7 +82,7 @@ module.exports = (name, options) => {
     }
   }
 
-  function onGameStart (makeBet) {
+  function onGameStart (state, makeBet) {
     clearScreen();
     prompt = inquirer.prompt([{
       type: 'input',
@@ -97,11 +97,11 @@ module.exports = (name, options) => {
     });
   }
 
-  function onGameTurn (turn, makeMove) {
+  function onGameTurn (state, makeMove) {
     clearScreen();
-    console.log(renderState(turn));
+    console.log(renderState(state));
 
-    var moves = turn.moves;
+    var moves = state.moves;
     if (moves.length > 0) {
       console.log('');
       prompt = inquirer.prompt([{
@@ -117,9 +117,9 @@ module.exports = (name, options) => {
     }
   }
 
-  function onGameEnd (turn, makeMove) {
+  function onGameEnd (state, makeMove) {
     clearScreen();
-    console.log(renderState(turn));
+    console.log(renderState(state));
   }
 
   return {

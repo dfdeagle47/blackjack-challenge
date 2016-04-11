@@ -1,6 +1,8 @@
 'use strict';
 
 var GameLoop = require('./blackjack/game-loop');
+// var makePlayer = require('./human-player/index');
+
 var gameLoop = new GameLoop(
   true,
   6,
@@ -8,7 +10,30 @@ var gameLoop = new GameLoop(
   100
 );
 
+// var player = makePlayer(
+//   '127.0.0.1',
+//   {
+//     clearScreen: true
+//   }
+// );
+
 gameLoop.join('127.0.0.1');
+
+// gameLoop.table.players[0].triggerGameStart = function (state) {
+//   return new Promise((resolve, reject) => {
+//     player.onGameStart(state, function (bet) {
+//       resolve(bet.amount);
+//     });
+//   });
+// };
+
+// gameLoop.table.players[0].triggerHandActions = function (state) {
+//   return new Promise((resolve, reject) => {
+//     player.onGameTurn(state, function (action) {
+//       resolve(action.move);
+//     });
+//   });
+// };
 
 function playLoop () {
   return gameLoop

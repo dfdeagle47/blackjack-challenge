@@ -58,9 +58,10 @@ class GameLoop {
             );
 
             // throw new Error('CHECKSUM');
-            process.exit(1);
+            // process.exit(1);
           } else {
-            // console.log('GAME');
+            console.log('dealer=', this.table.dealer.bankroll);
+            console.log('player=', this.table.players[0].bankroll);
             console.log('-----------------------------------');
             return null;
           }
@@ -83,7 +84,7 @@ class GameLoop {
     this.started = false;
 
     return Promise
-      .map(
+      .mapSeries(
         this
           .table
           .players,
@@ -164,7 +165,14 @@ class GameLoop {
 
     return player
       .triggerHandActions(
-        nextActions
+        // nextActions
+        this
+          .table
+          .serializeForPlayers(
+            playerIndex,
+            handIndex,
+            nextActions
+          )
       )
       .then(chosenAction => {
         // Note: Nice try!
@@ -233,30 +241,6 @@ class GameLoop {
             );
         }
       );
-  }
-
-  serializeState (dealer, dealerHand, player, playerHand) {
-    return {
-      players: this
-        .getPlayers()
-        .map(
-          player => player
-            .getHands()
-            .map(
-              hand => {
-                return hand
-                  .map(
-                    card => {
-                      return {
-                        suit: card.getSuit(),
-                        rank: card.getRank()
-                      };
-                    }
-                  );
-              }
-            )
-        )
-    };
   }
 
 }

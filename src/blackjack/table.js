@@ -146,13 +146,7 @@ class Table {
     const playerHandTotal = playerHand.getBestTotal();
     const dealerHandTotal = dealerHand.getBestTotal();
 
-    console.log('..1', this.deck.cardCount());
-    // console.log('playerHand=', playerHand);
-    // console.log('playerHandTotal=', playerHandTotal);
-    // console.log('dealerHandTotal=', dealerHandTotal);
-
     if (playerHand.hasNaturalBlackjack()) {
-      console.log('..2');
       playerHand.setState(
           states.WIN
       );
@@ -163,7 +157,6 @@ class Table {
         -1 * playerHand.getBet() * 1.5
       );
     } else if (dealerHand.hasNaturalBlackjack()) {
-      console.log('..3');
       playerHand.setState(
           states.LOSE
       );
@@ -171,7 +164,6 @@ class Table {
         playerHand.getBet()
       );
     } else if (dealerHand.hasBust()) {
-      console.log('..4');
       playerHand.setState(
           states.WIN
       );
@@ -182,7 +174,6 @@ class Table {
         -1 * playerHand.getBet()
       );
     } else if (playerHand.hasBust()) {
-      console.log('..5');
       playerHand.setState(
           states.LOSE
       );
@@ -190,7 +181,6 @@ class Table {
         playerHand.getBet()
       );
     } else if (playerHandTotal > dealerHandTotal) {
-      console.log('..6');
       playerHand.setState(
           states.WIN
       );
@@ -201,7 +191,6 @@ class Table {
         -1 * playerHand.getBet()
       );
     } else if (playerHandTotal === dealerHandTotal) {
-      console.log('..7');
       playerHand.setState(
           states.DRAW
       );
@@ -209,7 +198,6 @@ class Table {
         playerHand.getBet()
       );
     } else if (playerHandTotal < dealerHandTotal) {
-      console.log('..8');
       playerHand.setState(
           states.LOSE
       );
@@ -229,9 +217,9 @@ class Table {
         .map(
           player => player.serializeForPlayers()
         ),
-      playerIndex: playerIndex,
-      handIndex: handIndex,
-      moves: nextActions
+      playerIndex: playerIndex === undefined ? null : playerIndex,
+      handIndex: handIndex === undefined ? null : handIndex,
+      moves: nextActions === undefined ? null : nextActions
     };
   }
 

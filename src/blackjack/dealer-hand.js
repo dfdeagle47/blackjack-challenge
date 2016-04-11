@@ -73,6 +73,19 @@ class DealerHand extends Hand {
     return nextActions;
   }
 
+  serializeForPlayers () {
+    return {
+      state: this.state,
+      bet: this.bet,
+      cards: this
+        .cards[0]
+        // .cards
+        // .map(
+        //   card => card.serializeForPlayers()
+        // )
+    };
+  }
+
 }
 
 module.exports = DealerHand;

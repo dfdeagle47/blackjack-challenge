@@ -49,9 +49,8 @@ class Player {
     return Promise.resolve(50);
   }
 
-  triggerHandActions (actions) {
-    console.log(actions[0]);
-    return Promise.resolve(actions[0]);
+  triggerHandActions (state) {
+    return Promise.resolve(state.moves[0]);
   }
 
   triggerGameEnd () {
