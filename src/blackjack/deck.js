@@ -6,7 +6,12 @@ class Deck {
 
   constructor (numDecks) {
     this.numDecks = numDecks;
+    this.cards = [];
 
+    this.generateAndShuffle();
+  }
+
+  generateAndShuffle () {
     this.cards = this.shuffle(
       this.generate(
         this.numDecks

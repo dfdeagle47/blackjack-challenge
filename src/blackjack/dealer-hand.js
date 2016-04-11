@@ -8,7 +8,6 @@ class DealerHand extends Hand {
   constructor (cards, s17) {
     super(cards, null);
 
-    this.cards = cards;
     this.s17 = s17;
   }
 

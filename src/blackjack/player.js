@@ -17,6 +17,10 @@ class Player {
     return (this.hands.push(hand), hand);
   }
 
+  removeHands () {
+    return (this.hands = [], this.hands);
+  }
+
   removeHandByIndex (index) {
     return this.hands.splice(index, 1);
   }
@@ -29,6 +33,10 @@ class Player {
     return this.hands.length;
   }
 
+  getBankroll () {
+    return this.bankroll;
+  }
+
   addToBankroll (bet) {
     return (this.bankroll += bet);
   }
@@ -38,20 +46,16 @@ class Player {
   }
 
   triggerGameStart () {
-    console.log('PLAYER_START');
     return Promise.resolve(50);
   }
 
   triggerHandActions (actions) {
-    console.log('ASK_PLAYER');
-    console.log('actions=', actions);
-
+    console.log(actions[0]);
     return Promise.resolve(actions[0]);
   }
 
   triggerGameEnd () {
-    console.log('PLAYER_END');
-    return Promise.resolve();
+    return Promise.resolve(null);
   }
 
   serializeForPlayers () {

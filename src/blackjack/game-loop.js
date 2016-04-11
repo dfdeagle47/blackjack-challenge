@@ -42,7 +42,41 @@ class GameLoop {
           this.started = false;
         }
       )
-      .catch(e => console.log(e, e.stack));
+      .then(
+        () => {
+          if (this.table.checksumTable() !== true) {
+            console.log(
+              require('util').inspect(
+                this
+                  .table
+                  .serializeForPlayers(),
+                {
+                  colors: true,
+                  depth: 100
+                }
+              )
+            );
+
+            // throw new Error('CHECKSUM');
+            process.exit(1);
+          } else {
+            // console.log('GAME');
+            console.log('-----------------------------------');
+            return null;
+          }
+        }
+      )
+      .then(
+        () => {
+          if (this.table.deck.cardCount() > this.table.deck.numDecks * 52 * 0.5) {
+            this.table.deck.generateAndShuffle();
+          }
+        }
+      )
+      .catch(e => {
+        console.log(e, e.stack);
+        process.exit(1);
+      });
   }
 
   triggerGameStart () {
@@ -124,18 +158,6 @@ class GameLoop {
 
     const nextActions = hand.getNextActions();
 
-    console.log(
-      require('util').inspect(
-        this
-          .table
-          .serializeForPlayers(playerIndex, handIndex, nextActions),
-        {
-          colors: true,
-          depth: 100
-        }
-      )
-    );
-
     if (hand.getState() === states.STAND) {
       return null;
     }
@@ -201,7 +223,15 @@ class GameLoop {
         this
           .table
           .players,
-        player => player.triggerGameEnd
+        player => {
+          return player
+            .triggerGameEnd()
+            .then(
+              () => {
+                return player.removeHands();
+              }
+            );
+        }
       );
   }
 

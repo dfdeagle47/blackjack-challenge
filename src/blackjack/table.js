@@ -16,7 +16,7 @@ class Table {
     this.dealerBankroll = dealerBankroll;
     this.playerBankroll = playerBankroll;
 
-    this.dealer = new DealerPlayer(true, 1000 * 1000);
+    this.dealer = new DealerPlayer(this.dealerBankroll, true);
     this.players = [
       this.dealer
     ];
@@ -146,7 +146,13 @@ class Table {
     const playerHandTotal = playerHand.getBestTotal();
     const dealerHandTotal = dealerHand.getBestTotal();
 
+    console.log('..1', this.deck.cardCount());
+    // console.log('playerHand=', playerHand);
+    // console.log('playerHandTotal=', playerHandTotal);
+    // console.log('dealerHandTotal=', dealerHandTotal);
+
     if (playerHand.hasNaturalBlackjack()) {
+      console.log('..2');
       playerHand.setState(
           states.WIN
       );
@@ -157,6 +163,26 @@ class Table {
         -1 * playerHand.getBet() * 1.5
       );
     } else if (dealerHand.hasNaturalBlackjack()) {
+      console.log('..3');
+      playerHand.setState(
+          states.LOSE
+      );
+      dealer.addToBankroll(
+        playerHand.getBet()
+      );
+    } else if (dealerHand.hasBust()) {
+      console.log('..4');
+      playerHand.setState(
+          states.WIN
+      );
+      player.addToBankroll(
+        playerHand.getBet() * 2
+      );
+      dealer.addToBankroll(
+        -1 * playerHand.getBet()
+      );
+    } else if (playerHand.hasBust()) {
+      console.log('..5');
       playerHand.setState(
           states.LOSE
       );
@@ -164,6 +190,7 @@ class Table {
         playerHand.getBet()
       );
     } else if (playerHandTotal > dealerHandTotal) {
+      console.log('..6');
       playerHand.setState(
           states.WIN
       );
@@ -174,6 +201,7 @@ class Table {
         -1 * playerHand.getBet()
       );
     } else if (playerHandTotal === dealerHandTotal) {
+      console.log('..7');
       playerHand.setState(
           states.DRAW
       );
@@ -181,6 +209,7 @@ class Table {
         playerHand.getBet()
       );
     } else if (playerHandTotal < dealerHandTotal) {
+      console.log('..8');
       playerHand.setState(
           states.LOSE
       );
@@ -204,6 +233,25 @@ class Table {
       handIndex: handIndex,
       moves: nextActions
     };
+  }
+
+  checksumTable () {
+    return (
+      this
+      .getPlayers()
+      .reduce(
+        (bankrollSum, player) => {
+          return bankrollSum + player.getBankroll();
+        },
+        0
+      ) +
+      this
+        .getDealer()
+        .getBankroll()
+    ) === (
+      (this.playerCount() - 1) * this.playerBankroll +
+      this.dealerBankroll
+    );
   }
 
 }

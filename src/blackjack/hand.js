@@ -96,7 +96,9 @@ class Hand {
     return this
       .getTotals()
       .filter(
-        total => total > 21
+        total => {
+          return total <= 21;
+        }
       )
       .sort(
         (total1, total2) => total2 - total1
@@ -184,6 +186,7 @@ class Hand {
 
   serializeForPlayers () {
     return {
+      state: this.state,
       bet: this.bet,
       cards: this
         .cards
