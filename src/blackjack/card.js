@@ -24,7 +24,11 @@ class Card {
   }
 
   getSuit () {
-    const suitIndex = Math.ceil((this.value % 52) / 13);
+    const suitIndex = Math.ceil(
+      this.value / Math.ceil(
+        this.value / 52
+      ) / 13
+    );
 
     let suit = null;
 
