@@ -62,6 +62,6 @@ var app = server.listen(3000, () => {
 
   setTimeout(() => {
     game.quit();
-    //app.close();
+    app.close();
   }, 11000);
 });
