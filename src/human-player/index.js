@@ -30,7 +30,19 @@ function renderHand (hand, isActive) {
   var statePresentation = {
     'LOSE': chalk.dim
   }[hand.state] || identity;
-  var prefix = hand.state === 'WIN' ? chalk.green('✓') : renderActive(isActive);
+
+  var prefix;
+  switch (hand.state) {
+    case 'WIN':
+      prefix = chalk.green('✓');
+      break;
+    case 'DRAW':
+      prefix = chalk.green('=');
+      break;
+    default:
+      prefix = renderActive(isActive);
+  }
+
   return statePresentation(`${prefix} ${renderMoney(bet)} ${cards.map(renderCard).join(' ')}`);
 }
 
