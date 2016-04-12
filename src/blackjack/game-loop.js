@@ -57,13 +57,7 @@ class GameLoop {
                 }
               )
             );
-
-            // throw new Error('CHECKSUM');
-            // process.exit(1);
           } else {
-            console.log('dealer=', this.table.dealer.bankroll);
-            console.log('player=', this.table.players[0].bankroll);
-            console.log('-----------------------------------');
             return null;
           }
         }
@@ -184,7 +178,7 @@ class GameLoop {
           chosenAction
         );
 
-        this.triggerHandActions(
+        return this.triggerHandActions(
           playerIndex,
           handIndex
         );
