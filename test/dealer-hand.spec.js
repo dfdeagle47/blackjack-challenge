@@ -8,7 +8,7 @@ const DealerHand = require('../src/blackjack/dealer-hand');
 const actions = require('../src/blackjack/actions');
 const Card = require('../src/blackjack/card');
 
-describe('Card', () => {
+describe('DealerHand', () => {
   it('hit on hard 16 without s17', () => {
     const s17 = false;
     const card1 = new Card(10);
