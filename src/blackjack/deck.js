@@ -43,10 +43,6 @@ class Deck {
     return this.doFisherYatesShuffle(cards);
   }
 
-  doNaiveShuffle (cards) {
-    return cards.sort(() => Math.random() > Math.random());
-  }
-
   doFisherYatesShuffle (cards) {
     let rand;
     let tmp;
