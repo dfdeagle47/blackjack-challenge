@@ -58,6 +58,7 @@ function renderPlayers (players, playerIndex, handIndex) {
 }
 
 function renderState (state) {
+  state = state || {};
   var players = state.players || [];
   return renderPlayers(players, state.playerIndex, state.handIndex);
 }
