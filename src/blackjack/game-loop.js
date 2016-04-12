@@ -115,35 +115,33 @@ class GameLoop {
           .keys()
         ),
         (playerIndex) => {
-          return this.triggerPlayerActions(playerIndex);
+          return this.triggerPlayerActions(playerIndex, 0);
         }
       );
   }
 
-  triggerPlayerActions (playerIndex) {
-    return Promise
-      .each(
-        /**
-         * This introduces a bug where splitting won't work because then the number
-         * of hands evolves during the game.
-         * Also, removing hands on invalid actions will break this as well.
-         * Just doing a while loop around pending hands a restart at 0 should wokr.
-         */
-        Array.from(
-          new Array(
-            this
-              .table
-              .getPlayerByIndex(
-                playerIndex
-              )
-              .handCount()
-          )
-          .keys()
-        ),
-        (handIndex) => {
-          return this.triggerHandActions(playerIndex, handIndex);
-        }
+  triggerPlayerActions (playerIndex, handIndex) {
+    const player = this
+      .table
+      .getPlayerByIndex(
+        playerIndex
       );
+
+    if (handIndex === player.handCount()) {
+      return null;
+    }
+
+    return this
+      .triggerHandActions(
+        playerIndex,
+        handIndex
+      )
+      .then(() => {
+        return this.triggerPlayerActions(
+          playerIndex,
+          handIndex + 1
+        );
+      });
   }
 
   triggerHandActions (playerIndex, handIndex) {
@@ -165,7 +163,6 @@ class GameLoop {
 
     return player
       .triggerHandActions(
-        // nextActions
         this
           .table
           .serializeForPlayers(
