@@ -48,8 +48,8 @@ class Player {
   }
 
   triggerHandActions (state) {
-    // return Promise.resolve(state.moves[0]);
-    return Promise.resolve(require('underscore').sample(state.moves));
+    return Promise.resolve(state.moves[0]);
+    // return Promise.resolve(require('underscore').sample(state.moves));
   }
 
   triggerGameEnd () {
