@@ -77,8 +77,9 @@ class DealerHand extends Hand {
     return {
       state: this.state,
       bet: this.bet,
-      cards: this
-        .cards[0]
+      cards: [
+        this.cards[0]
+      ]
         // .cards
         // .map(
         //   card => card.serializeForPlayers()
