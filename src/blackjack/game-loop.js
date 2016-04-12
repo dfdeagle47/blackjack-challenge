@@ -15,12 +15,12 @@ class GameLoop {
     );
   }
 
-  join (ipAddress) {
+  join (name) {
     if (this.started === true) {
       return new Error('Game already started');
     }
 
-    this.table.addPlayer(ipAddress);
+    this.table.addPlayer(name);
   }
 
   start () {

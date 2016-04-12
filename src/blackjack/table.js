@@ -37,18 +37,12 @@ class Table {
     return this.players[index];
   }
 
-  getPlayerByIpAddress (ipAddress) {
-    return this
-      .players
-      .filter(player => player.ipAddress === ipAddress)[0];
-  }
-
   playerCount () {
     return this.players.length;
   }
 
-  addPlayer (ipAddress) {
-    const player = new Player(ipAddress, this.playerBankroll);
+  addPlayer (name) {
+    const player = new Player(name, this.playerBankroll);
     return (this.players.unshift(player), player);
   }
 

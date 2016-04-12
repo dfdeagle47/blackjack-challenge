@@ -2,8 +2,8 @@
 
 class Player {
 
-  constructor (ipAddress, bankroll) {
-    this.ipAddress = ipAddress;
+  constructor (name, bankroll) {
+    this.name = name;
     this.bankroll = bankroll;
 
     this.hands = [];
@@ -59,7 +59,7 @@ class Player {
 
   serializeForPlayers () {
     return {
-      ipAddress: this.ipAddress,
+      name: this.name,
       bankroll: this.bankroll,
       hands: this
         .hands
