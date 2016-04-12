@@ -83,8 +83,14 @@ module.exports = (name, options) => {
     }
   }
 
-  function onGameStart (state, makeBet) {
+  function render (state) {
     clearScreen();
+    console.log(renderState(state));
+  }
+
+  function onGameStart (state, makeBet) {
+    render(state);
+
     prompt = inquirer.prompt([{
       type: 'input',
       name: 'amount',
@@ -99,8 +105,7 @@ module.exports = (name, options) => {
   }
 
   function onGameTurn (state, makeMove) {
-    clearScreen();
-    console.log(renderState(state));
+    render(state);
 
     var moves = state.moves;
     if (moves.length > 0) {
@@ -118,9 +123,8 @@ module.exports = (name, options) => {
     }
   }
 
-  function onGameEnd (state, makeMove) {
-    clearScreen();
-    console.log(renderState(state));
+  function onGameEnd (state) {
+    render(state);
   }
 
   return {
