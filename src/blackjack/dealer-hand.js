@@ -80,7 +80,7 @@ class DealerHand extends Hand {
       cards: [
         this
           .cards[0]
-          .serializeForPlayers
+          .serializeForPlayers()
       ]
         // .cards
         // .map(
