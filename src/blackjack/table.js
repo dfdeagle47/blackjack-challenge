@@ -130,7 +130,7 @@ class Table {
       hand.getBet()
     );
 
-    player.add(newHand);
+    player.addHand(newHand);
 
     this.doHit(player, hand);
     this.doHit(player, newHand);

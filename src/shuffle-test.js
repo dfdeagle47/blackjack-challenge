@@ -7,7 +7,12 @@ console.log(
   require('util').inspect(
     deck
       .cards
-      .map(card => card.serializeForPlayers()),
+      .map(card => Object.assign(
+          card.serializeForPlayers(), {
+            value: card.value
+          }
+        )
+      ),
     {
       colors: true,
       depth: 100
