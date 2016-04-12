@@ -28,9 +28,9 @@ function renderHand (hand, isActive) {
   var bet = hand.bet || 0;
   var cards = hand.cards || [];
   var statePresentation = {
-    'lost': chalk.dim
+    'LOSE': chalk.dim
   }[hand.state] || identity;
-  var prefix = hand.state === 'win' ? chalk.green('✓') : renderActive(isActive);
+  var prefix = hand.state === 'WIN' ? chalk.green('✓') : renderActive(isActive);
   return statePresentation(`${prefix} ${renderMoney(bet)} ${cards.map(renderCard).join(' ')}`);
 }
 
@@ -83,13 +83,15 @@ module.exports = (name, options) => {
     }
   }
 
-  function render (state) {
+  function render (title, state) {
     clearScreen();
+    console.log(`${chalk.green('#')} ${title}`);
+    console.log('');
     console.log(renderState(state));
   }
 
   function onGameStart (state, makeBet) {
-    render(state);
+    render('GAME START', state);
 
     prompt = inquirer.prompt([{
       type: 'input',
@@ -105,7 +107,7 @@ module.exports = (name, options) => {
   }
 
   function onGameTurn (state, makeMove) {
-    render(state);
+    render('GAME TURN', state);
 
     var moves = state.moves;
     if (moves.length > 0) {
@@ -124,7 +126,7 @@ module.exports = (name, options) => {
   }
 
   function onGameEnd (state) {
-    render(state);
+    render('GAME END', state);
   }
 
   return {
