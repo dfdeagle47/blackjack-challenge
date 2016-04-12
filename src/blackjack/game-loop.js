@@ -85,7 +85,11 @@ class GameLoop {
           .players,
         player => {
           return player
-            .triggerGameStart()
+            .triggerGameStart(
+              this
+                .table
+                .serializeForPlayers()
+            )
             .then(bet => {
               this
                 .table
@@ -220,7 +224,11 @@ class GameLoop {
           .players,
         player => {
           return player
-            .triggerGameEnd()
+            .triggerGameEnd(
+              this
+                .table
+                .serializeForPlayers()
+            )
             .then(
               () => {
                 return player.removeHands();

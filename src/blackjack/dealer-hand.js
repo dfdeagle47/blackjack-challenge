@@ -15,7 +15,7 @@ class DealerHand extends Hand {
     return this.s17 === true;
   }
 
-  hasSoft17OrLower () {
+  has18OrHigher () {
     return this
       .getCombinations(
         this
@@ -28,14 +28,33 @@ class DealerHand extends Hand {
             .reduce(
               (total, value) => total + value,
               0
-            ) <= 17 &&
+            ) >= 18
+        );
+      })
+      .length !== 0;
+  }
+
+  hasSoft17 () {
+    return this
+      .getCombinations(
+        this
+          .cards
+          .map(card => card.getValues())
+      )
+      .filter(function (combination) {
+        return (
+          combination
+            .reduce(
+              (total, value) => total + value,
+              0
+            ) === 17 &&
           combination.indexOf(11) !== -1
         );
       })
       .length !== 0;
   }
 
-  hasHard16OrLower () {
+  hasHard17 () {
     return this
       .getCombinations(
         this
@@ -48,7 +67,7 @@ class DealerHand extends Hand {
             .reduce(
               (total, value) => total + value,
               0
-            ) <= 16 &&
+            ) === 17 &&
           combination.indexOf(11) === -1
         );
       })
@@ -59,15 +78,16 @@ class DealerHand extends Hand {
     const nextActions = [];
 
     if (
+      this.has18OrHigher() ||
+      this.hasHard17() ||
       (
-        this.hasS17Rule() &&
-        this.hasSoft17OrLower()
-      ) ||
-      this.hasHard16OrLower()
+        this.hasSoft17() &&
+        !this.hasS17Rule()
+      )
     ) {
-      nextActions.push(actions.HIT);
-    } else {
       nextActions.push(actions.STAND);
+    } else {
+      nextActions.push(actions.HIT);
     }
 
     return nextActions;
