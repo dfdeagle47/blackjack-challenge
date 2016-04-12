@@ -93,19 +93,21 @@ class DealerHand extends Hand {
     return nextActions;
   }
 
-  serializeForPlayers () {
+  serializeForPlayers (isEnd) {
     return {
       state: this.state,
       bet: this.bet,
-      cards: [
-        this
-          .cards[0]
-          .serializeForPlayers()
-      ]
-        // .cards
-        // .map(
-        //   card => card.serializeForPlayers()
-        // )
+      cards: isEnd !== true
+        ? [
+          this
+            .cards[0]
+            .serializeForPlayers()
+        ]
+        : this
+          .cards
+          .map(
+            card => card.serializeForPlayers(isEnd)
+          )
     };
   }
 

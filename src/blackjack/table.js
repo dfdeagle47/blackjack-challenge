@@ -201,16 +201,16 @@ class Table {
     }
   }
 
-  serializeForPlayers (playerIndex, handIndex, nextActions) {
+  serializeForPlayers (playerIndex, handIndex, nextActions, isEnd) {
     return {
       players: this
         .players
         .map(
-          player => player.serializeForPlayers()
+          player => player.serializeForPlayers(isEnd)
         ),
-      playerIndex: playerIndex === undefined ? null : playerIndex,
-      handIndex: handIndex === undefined ? null : handIndex,
-      moves: nextActions === undefined ? null : nextActions
+      playerIndex: playerIndex === null ? null : playerIndex,
+      handIndex: handIndex === null ? null : handIndex,
+      moves: nextActions === null ? null : nextActions
     };
   }
 

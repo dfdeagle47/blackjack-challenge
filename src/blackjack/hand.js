@@ -184,14 +184,14 @@ class Hand {
     return nextActions;
   }
 
-  serializeForPlayers () {
+  serializeForPlayers (isEnd) {
     return {
       state: this.state,
       bet: this.bet,
       cards: this
         .cards
         .map(
-          card => card.serializeForPlayers()
+          card => card.serializeForPlayers(isEnd)
         )
     };
   }

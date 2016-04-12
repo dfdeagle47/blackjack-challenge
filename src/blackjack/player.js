@@ -56,7 +56,7 @@ class Player {
     return Promise.resolve(null);
   }
 
-  serializeForPlayers () {
+  serializeForPlayers (isEnd) {
     return {
       name: this.name,
       dealer: this.dealer,
@@ -64,7 +64,7 @@ class Player {
       hands: this
         .hands
         .map(
-          hand => hand.serializeForPlayers()
+          hand => hand.serializeForPlayers(isEnd)
         )
     };
   }

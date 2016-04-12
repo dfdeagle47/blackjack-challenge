@@ -50,7 +50,12 @@ class GameLoop {
               require('util').inspect(
                 this
                   .table
-                  .serializeForPlayers(),
+                  .serializeForPlayers(
+                    null,
+                    null,
+                    null,
+                    false
+                  ),
                 {
                   colors: true,
                   depth: 100
@@ -227,7 +232,12 @@ class GameLoop {
             .triggerGameEnd(
               this
                 .table
-                .serializeForPlayers()
+                .serializeForPlayers(
+                  null,
+                  null,
+                  null,
+                  true
+                )
             )
             .then(
               () => {

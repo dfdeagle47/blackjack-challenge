@@ -55,7 +55,7 @@ class Card {
     return rankIndex;
   }
 
-  serializeForPlayers () {
+  serializeForPlayers (isEnd) {
     return {
       suit: this.getSuit(),
       rank: this.getRank()
