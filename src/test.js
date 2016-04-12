@@ -10,34 +10,9 @@ var gameLoop = new GameLoop(
   100
 );
 
-var player = makePlayer(
-  '127.0.0.1',
-  {
-  }
-);
+var player = makePlayer('127.0.0.1', {});
 
-gameLoop.join('127.0.0.1');
-
-gameLoop.table.players[0].triggerGameStart = function (state) {
-  return new Promise((resolve, reject) => {
-    player.onGameStart(state, function (bet) {
-      resolve(bet.amount);
-    });
-  });
-};
-
-gameLoop.table.players[0].triggerHandActions = function (state) {
-  return new Promise((resolve, reject) => {
-    player.onGameTurn(state, function (action) {
-      resolve(action.move);
-    });
-  });
-};
-
-gameLoop.table.players[0].triggerGameEnd = function (state) {
-  player.onGameEnd(state);
-  return Promise.resolve();
-};
+gameLoop.join(player);
 
 function playLoop () {
   return gameLoop

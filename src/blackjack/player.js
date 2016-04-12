@@ -2,12 +2,13 @@
 
 class Player {
 
-  constructor (name, bankroll) {
-    this.name = name;
-    this.bankroll = bankroll;
-
-    this.dealer = false;
-
+  constructor (playerConfig, extra) {
+    this.name = playerConfig.name;
+    this.onGameStart = playerConfig.onGameStart;
+    this.onGameTurn = playerConfig.onGameTurn;
+    this.onGameEnd = playerConfig.onGameEnd;
+    this.bankroll = extra.bankroll;
+    this.dealer = !!extra.dealer;
     this.hands = [];
   }
 
@@ -43,16 +44,24 @@ class Player {
     return (this.bankroll -= bet);
   }
 
-  triggerGameStart () {
-    return Promise.resolve(50);
+  triggerGameStart (state) {
+    return new Promise((resolve, reject) => {
+      this.onGameStart(state, function (bet) {
+        resolve(bet.amount);
+      });
+    });
   }
 
   triggerHandActions (state) {
-    return Promise.resolve(state.moves[0]);
-    // return Promise.resolve(require('underscore').sample(state.moves));
+    return new Promise((resolve, reject) => {
+      this.onGameTurn(state, function (action) {
+        resolve(action.move);
+      });
+    });
   }
 
-  triggerGameEnd () {
+  triggerGameEnd (state) {
+    this.onGameEnd(state);
     return Promise.resolve(null);
   }
 

@@ -2,7 +2,6 @@
 
 const actions = require('./actions');
 const states = require('./states');
-const DealerPlayer = require('./dealer-player');
 const Player = require('./player');
 const DealerHand = require('./dealer-hand');
 const Hand = require('./hand');
@@ -16,7 +15,20 @@ class Table {
     this.dealerBankroll = dealerBankroll;
     this.playerBankroll = playerBankroll;
 
-    this.dealer = new DealerPlayer(this.dealerBankroll, true);
+    this.dealer = new Player({
+      name: 'DEALER',
+      onGameStart (state, makeBet) {
+        makeBet({ amount: 0 });
+      },
+      onGameTurn (state, makeMove) {
+        makeMove({ move: state.moves[0] });
+      },
+      onGameEnd () {}
+    }, {
+      bankroll: this.dealerBankroll,
+      dealer: true
+    });
+
     this.players = [
       this.dealer
     ];
@@ -41,8 +53,8 @@ class Table {
     return this.players.length;
   }
 
-  addPlayer (name) {
-    const player = new Player(name, this.playerBankroll);
+  addPlayer (playerCfg) {
+    const player = new Player(playerCfg, { bankroll: this.playerBankroll });
     return (this.players.unshift(player), player);
   }
 
@@ -71,7 +83,7 @@ class Table {
 
     let hand = null;
 
-    if (player instanceof DealerPlayer) {
+    if (player.dealer) {
       hand = new DealerHand(
         [
           card1,

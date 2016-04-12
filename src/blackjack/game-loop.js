@@ -16,12 +16,12 @@ class GameLoop {
     );
   }
 
-  join (name) {
+  join (player) {
     if (this.started === true) {
       return new Error('Game already started');
     }
 
-    this.table.addPlayer(name);
+    this.table.addPlayer(player);
   }
 
   start () {
