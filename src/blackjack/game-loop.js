@@ -1,6 +1,7 @@
 'use strict';
 
 const Promise = require('bluebird');
+const actions = require('./actions');
 const states = require('./states');
 const Table = require('./table');
 
@@ -174,22 +175,17 @@ class GameLoop {
       .then(chosenAction => {
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
-          throw new Error('Invalid action');
-        } else {
-          this.table.doAction(
-            player,
-            hand,
-            chosenAction
-          );
+          chosenAction = actions.STAND;
         }
+
+        this.table.doAction(
+          player,
+          hand,
+          chosenAction
+        );
 
         this.triggerHandActions(
           playerIndex,
-          handIndex
-        );
-      })
-      .catch(e => {
-        player.removeHandByIndex(
           handIndex
         );
       });

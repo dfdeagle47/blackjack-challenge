@@ -23,10 +23,6 @@ class Player {
     return (this.hands = [], this.hands);
   }
 
-  removeHandByIndex (index) {
-    return this.hands.splice(index, 1);
-  }
-
   getHandByIndex (index) {
     return this.hands[index];
   }
