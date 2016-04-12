@@ -209,11 +209,8 @@ class Table {
 
   serializeForPlayers (playerIndex, handIndex, nextActions) {
     return {
-      dealer: this
-        .getDealer()
-        .serializeForPlayers(),
       players: this
-        .getPlayers()
+        .players
         .map(
           player => player.serializeForPlayers()
         ),

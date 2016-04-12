@@ -6,6 +6,8 @@ class DealerPlayer extends Player {
 
   constructor (bankdroll) {
     super('DEALER', bankdroll);
+
+    this.dealer = true;
   }
 
   triggerGameStart () {
