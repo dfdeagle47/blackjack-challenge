@@ -6,6 +6,8 @@ class Player {
     this.name = name;
     this.bankroll = bankroll;
 
+    this.dealer = false;
+
     this.hands = [];
   }
 
@@ -60,6 +62,7 @@ class Player {
   serializeForPlayers () {
     return {
       name: this.name,
+      dealer: this.dealer,
       bankroll: this.bankroll,
       hands: this
         .hands

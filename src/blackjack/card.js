@@ -52,21 +52,22 @@ class Card {
 
   getRank () {
     const cardIndex = this.getIndex();
-    const rankIndex = cardIndex === 0 ? cardIndex + 1 : cardIndex;
+    const rankIndex = cardIndex === 0 ? 13 : cardIndex;
 
-    let rank = null;
+    let rank = rankIndex;
+    // let rank = null;
 
-    if (rankIndex === 1) {
-      rank = 'ace';
-    } else if (rankIndex >= 2 && rankIndex <= 10) {
-      rank = rankIndex;
-    } else if (rankIndex === 11) {
-      rank = 'jack';
-    } else if (rankIndex === 12) {
-      rank = 'queen';
-    } else if (rankIndex === 13) {
-      rank = 'king';
-    }
+    // if (rankIndex === 1) {
+    //   rank = 'ace';
+    // } else if (rankIndex >= 2 && rankIndex <= 10) {
+    //   rank = rankIndex;
+    // } else if (rankIndex === 11) {
+    //   rank = 'jack';
+    // } else if (rankIndex === 12) {
+    //   rank = 'queen';
+    // } else if (rankIndex === 13) {
+    //   rank = 'king';
+    // }
 
     return rank;
   }
