@@ -204,6 +204,25 @@ describe('Hand', () => {
     assert.strictEqual(nextActions[1], actions.STAND);
   });
 
+  it('can\'t hit after double down', () => {
+    const card1 = new Card(5);
+    const card2 = new Card(6);
+    const card3 = new Card(9);
+    const hand = new Hand(
+      [
+        card1,
+        card2
+      ]
+    );
+    hand.setHasDoubledDown(true);
+    hand.addCard(card3);
+    const nextActions = hand.getNextActions();
+
+    assert.strictEqual(Array.isArray(nextActions), true);
+    assert.strictEqual(nextActions.length, 1);
+    assert.strictEqual(nextActions[0], actions.STAND);
+  });
+
   it('can split and double down with 5 and 5', () => {
     const card1 = new Card(5);
     const card2 = new Card(5);

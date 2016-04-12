@@ -29,8 +29,12 @@ class Hand {
     return (this.bet += bet);
   }
 
+  getHasDoubledDown () {
+    return this.hasDoubledDown;
+  }
+
   setHasDoubledDown (hasDoubledDown) {
-    this.hasDoubleDowned = hasDoubledDown;
+    return (this.hasDoubledDown = hasDoubledDown, this.hasDoubledDown);
   }
 
   getState (state) {
@@ -127,7 +131,7 @@ class Hand {
   }
 
   canHit () {
-    return this.hasDoubledDown === false;
+    return this.getHasDoubledDown() === false;
   }
 
   canStand () {
@@ -136,7 +140,7 @@ class Hand {
 
   canDoubleDown () {
     return (
-      this.hasDoubledDown === false &&
+      this.getHasDoubledDown() === false &&
       this.cards.length === 2 &&
       this
         .getTotals()
