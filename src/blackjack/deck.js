@@ -40,7 +40,27 @@ class Deck {
   }
 
   shuffle (cards) {
+    return this.doFisherYatesShuffle(cards);
+  }
+
+  doNaiveShuffle (cards) {
     return cards.sort(() => Math.random() > Math.random());
+  }
+
+  doFisherYatesShuffle (cards) {
+    let rand;
+    let tmp;
+    let len = cards.length;
+    const ret = cards.slice();
+
+    while (len) {
+      rand = Math.floor(Math.random() * len--);
+      tmp = ret[len];
+      ret[len] = ret[rand];
+      ret[rand] = tmp;
+    }
+
+    return ret;
   }
 
 }
