@@ -12,7 +12,9 @@
     "lint": "semistandard --verbose | snazzy",
     "security": "snyk wizard",
     "start": "node ./src/server.js",
-    "test": "mocha --recursive test/"
+    "test": "mocha --recursive test/",
+    "table": "node ./src/run-table",
+    "client": "node ./src/run-client"
   },
   "dependencies": {
     "bluebird": "^3.3.4",
