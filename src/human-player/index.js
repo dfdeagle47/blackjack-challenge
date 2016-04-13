@@ -114,18 +114,21 @@ module.exports = (name, options) => {
 
   function onGameStart (state, makeBet) {
     render('GAME START', state);
+    var me = state.players.find(player => player.name === name);
 
-    prompt = inquirer.prompt([{
-      type: 'input',
-      name: 'amount',
-      message: 'Place your bet $',
-      default: 0,
-      filter: Number
-    }]);
-    prompt.then(result => {
-      prompt = null;
-      makeBet(result);
-    });
+    if (!me.spectator) {
+      prompt = inquirer.prompt([{
+        type: 'input',
+        name: 'amount',
+        message: 'Place your bet $',
+        default: 0,
+        filter: Number
+      }]);
+      prompt.then(result => {
+        prompt = null;
+        makeBet(result);
+      });
+    }
   }
 
   function onGameTurn (state, makeMove) {
