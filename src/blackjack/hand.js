@@ -25,6 +25,10 @@ class Hand {
     return this.bet;
   }
 
+  setBet (bet) {
+    return (this.bet = bet);
+  }
+
   addToBet (bet) {
     return (this.bet += bet);
   }
