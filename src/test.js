@@ -20,14 +20,16 @@ gameLoop
     }
   );
 
-function playLoop () {
-  return gameLoop
-    .start()
-    .then(
-      () => {
-        return playLoop();
-      }
-    );
-}
+// function playLoop () {
+//   return gameLoop
+//     .start()
+//     .then(
+//       () => {
+//         return playLoop();
+//       }
+//     );
+// }
 
-playLoop();
+gameLoop.startLoop();
+
+// playLoop();

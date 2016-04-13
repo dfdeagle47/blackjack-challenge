@@ -28,14 +28,36 @@ class GameLoop {
     const name = playerConfig.name;
 
     this
-      .table
-      .addPlayer(playerConfig, extras);
+      .queuedPlayers
+      .push([
+        playerConfig,
+        extras
+      ]);
 
     return this
       .quit
       .bind(
         this,
         name
+      );
+  }
+
+  swap () {
+    this
+      .queuedPlayers
+      .forEach(
+        (queuedPlayer) => {
+          this
+            .table
+            .removePlayerByName(
+              queuedPlayer[0].name
+            );
+
+          this
+            .table
+            .addPlayer
+            .apply(this.table, queuedPlayer);
+        }
       );
   }
 
@@ -52,7 +74,8 @@ class GameLoop {
   }
 
   startLoop () {
-    return this.start
+    return this
+      .start()
       .catch(e => {
         console.log(e, e.stack);
       })
@@ -71,6 +94,8 @@ class GameLoop {
   }
 
   start () {
+    this.swap();
+
     const playerCount = this
       .table
       .playerCount({
@@ -79,7 +104,7 @@ class GameLoop {
       });
 
     if (playerCount === 0) {
-      return null;
+      return Promise.resolve(null);
     }
 
     this.started = true;
