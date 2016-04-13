@@ -259,13 +259,13 @@ class GameLoop {
   }
 
   triggerHandActions (playerIndex, handIndex) {
-    console.log('[HAND_ACTIONS_TRIGGER] Players actions trigger for', player.name, 'and hand', handIndex);
-
     const player = this
       .table
       .getPlayerByIndex(
         playerIndex
       );
+
+    console.log('[HAND_ACTIONS_TRIGGER] Players actions trigger for', player.name, 'and hand', handIndex);
 
     const hand = player.getHandByIndex(
       handIndex
