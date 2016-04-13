@@ -121,6 +121,7 @@ class GameLoop {
         () => {
           if (this.table.checksumTable() !== true) {
             console.log(
+              'CHECKSUM_ERROR=',
               require('util').inspect(
                 this
                   .table
@@ -187,7 +188,7 @@ class GameLoop {
             })
             .catch((e) => {
               console.error('START_ERROR=', e, e.stack);
-              this.table.removePlayerByName(player.name);
+              this.table.makePlayerSpectatorByName(player.name);
             });
         }
       );
@@ -243,7 +244,17 @@ class GameLoop {
       handIndex
     );
 
-    const nextActions = hand.getNextActions();
+    let nextActions = hand.getNextActions();
+
+    if (!player.canBetAmount(hand.getBet())) {
+      nextActions = nextActions
+        .filter(
+          nextAction => (
+            nextAction !== actions.DOUBLE_DOWN &&
+            nextAction !== actions.SPLIT
+          )
+        );
+    }
 
     if (hand.getState() === states.STAND) {
       return Promise.resolve(null);
@@ -265,16 +276,6 @@ class GameLoop {
           throw new Error('Error: ' + player.name + ' tried to do an invalid action `' + chosenAction + '`');
         }
 
-        if (
-          (
-            chosenAction === actions.DOUBLE_DOWN ||
-            chosenAction === actions.SPLIT
-          ) &&
-          !player.canBetAmount(hand.getBet())
-        ) {
-          throw new Error('Error: ' + player.name + ' doesn’t have enough money to do action `' + chosenAction + '`');
-        }
-
         if (player.isSpectator() === false) {
           this.table.doAction(
             player,
@@ -290,7 +291,7 @@ class GameLoop {
       })
       .catch((e) => {
         console.error('ACTION_ERROR=', e, e.stack);
-        this.table.removePlayerByName(player.name);
+        this.table.makePlayerSpectatorByName(player.name);
       });
   }
 

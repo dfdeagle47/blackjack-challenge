@@ -79,6 +79,18 @@ class Table {
     return this.players;
   }
 
+  makePlayerSpectatorByName (name) {
+    this.players = this
+      .players
+      .map(
+        player => player.getName() === name
+          ? (player.spectator = true, player)
+          : player
+      );
+
+    return this.players;
+  }
+
   getPlayerIndexByName (name) {
     let index = -1;
     let len = this.players.length;
