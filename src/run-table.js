@@ -3,6 +3,7 @@
 var GameLoop = require('./blackjack/game-loop');
 var network = require('./network');
 var http = require('http');
+var minimist = require('minimist');
 
 function startTable (port) {
   var gameLoop = new GameLoop(
@@ -25,4 +26,10 @@ function startTable (port) {
   });
 }
 
-[ 3000, 3001, 3002, 3003, 3004, 3005 ].forEach(startTable);
+var argv = minimist(process.argv.slice(2));
+
+if (!argv.port) {
+  console.log('--port required');
+} else {
+  startTable(argv.port);
+}

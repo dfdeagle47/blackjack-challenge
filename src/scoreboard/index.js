@@ -37,7 +37,7 @@ class Scoreboard extends EventEmitter {
     this._scoresPath = path;
     var persistence = writer(this._scoresPath);
     this.on('update', () => {
-      persistence.write(this.scores);
+      persistence(this.scores);
     });
   }
   get scores () {
@@ -54,34 +54,37 @@ class Scoreboard extends EventEmitter {
     return `scoreboard-${Math.floor(Math.random() * 1000000000)}`;
   }
   getSpectator () {
+    var board = this;
     return {
       name: this._generateName(),
-      onGameStart: () => null,
-      onGameTurn: () => null,
+      onGameStart: (state, makeBet) => makeBet({ amount: 0 }),
+      onGameTurn: (state, makeMove) => makeMove({ move: state.moves[0] }),
       onGameEnd (state) {
-        state.players.forEach(player => {
-          if (!this.scores[player.name]) {
-            this.scores[player.name] = {
-              name: player.name,
-              bankroll: 0,
-              gamesPlayed: 0,
-              handsPlayed: 0,
-              handsWon: 0,
-              handsDraw: 0,
-              handsLost: 0,
-              handsSplit: 0
-            };
-          }
-          var playerScore = this.scores[player.name];
-          playerScore.bankroll = player.bankroll;
-          playerScore.gamesPlayed += 1;
-          playerScore.handsPlayed += player.hands.length;
-          playerScore.handsWon += player.hands.filter(hand => hand.state === 'WIN').length;
-          playerScore.handsDraw += player.hands.filter(hand => hand.state === 'DRAW').length;
-          playerScore.handsLost += player.hands.filter(hand => hand.state === 'LOSE').length;
-          playerScore.handsSplit += player.hands.length > 1 ? 1 : 0;
-        });
-        this.emit('update', this.scores);
+        state.players
+          .filter(player => !player.spectator && !player.dealer)
+          .forEach(player => {
+            if (!board.scores[player.name]) {
+              board.scores[player.name] = {
+                name: player.name,
+                bankroll: 0,
+                gamesPlayed: 0,
+                handsPlayed: 0,
+                handsWon: 0,
+                handsDraw: 0,
+                handsLost: 0,
+                handsSplit: 0
+              };
+            }
+            var playerScore = board.scores[player.name];
+            playerScore.bankroll = player.bankroll;
+            playerScore.gamesPlayed += 1;
+            playerScore.handsPlayed += player.hands.length;
+            playerScore.handsWon += player.hands.filter(hand => hand.state === 'WIN').length;
+            playerScore.handsDraw += player.hands.filter(hand => hand.state === 'DRAW').length;
+            playerScore.handsLost += player.hands.filter(hand => hand.state === 'LOSE').length;
+            playerScore.handsSplit += player.hands.length - 1;
+          });
+        board.emit('update', board.scores);
       }
     };
   }
@@ -91,12 +94,12 @@ class Scoreboard extends EventEmitter {
     });
     Object.keys(this.scores)
       .map(name => {
-        var player = this.scores;
+        var player = this.scores[name];
         return [
           name,
           `\$${player.bankroll}`,
           player.gamesPlayed,
-          player.handspPlayed,
+          player.handsPlayed,
           player.handsWon,
           player.handsDraw,
           player.handsLost,
