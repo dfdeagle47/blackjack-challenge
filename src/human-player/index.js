@@ -74,7 +74,6 @@ function renderPlayer (player, isActive, handIndex) {
 function renderPlayers (players, playerIndex, handIndex) {
   return players
     .map(player => player)
-    .sort((a, b) => b.spectator - a.spectator)
     .map((player, index) => {
       return renderPlayer(player, index === playerIndex, handIndex);
     }).join('\n\n');
@@ -88,7 +87,8 @@ function renderState (state) {
 
 module.exports = (name, options) => {
   options = Object.assign({
-    clearScreen: false
+    clearScreen: false,
+    spectator: false
   }, options);
 
   var prompt = null;
@@ -114,15 +114,21 @@ module.exports = (name, options) => {
   }
 
   function onGameStart (state, makeBet) {
+    if (options.spectator) {
+      return;
+    }
+
     render('GAME START', state);
     var me = state.players.find(player => player.name === name);
 
     if (!me.spectator) {
+      console.log('');
+      var dflt = Math.ceil(me.bankroll * 0.1);
       prompt = inquirer.prompt([{
         type: 'input',
         name: 'amount',
         message: 'Place your bet $',
-        default: 0,
+        default: dflt,
         filter: Number
       }]);
       prompt.then(result => {

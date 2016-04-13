@@ -12,16 +12,17 @@ function start () {
   var game = network.createClient(argv.table).join({
     name: 'my-bot',
     onGameStart (state, makeBet) {
+      if (state.players[state.playerIndex].spectator) {
+        game.quit();
+        setTimeout(() => start(), 10000);
+      }
       makeBet({ amount: 10 });
     },
     onGameTurn (state, makeMove) {
       makeMove({ move: state.moves[0] });
     },
     onGameEnd (state) {
-      if (state.players[state.playerIndex].spectator) {
-        game.quit();
-        setImmediate(() => start());
-      }
+      console.log(JSON.stringify(state, null, 2));
     }
   });
 }

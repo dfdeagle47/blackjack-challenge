@@ -1,0 +1,95 @@
+{
+  "players": [
+    {
+      "name": "my-bot",
+      "dealer": false,
+      "spectator": false,
+      "bankroll": 90,
+      "hands": [
+        {
+          "state": "LOSE",
+          "bet": 10,
+          "cards": [
+            {
+              "suit": "hearts",
+              "rank": 5
+            },
+            {
+              "suit": "hearts",
+              "rank": 13
+            },
+            {
+              "suit": "spades",
+              "rank": 5
+            },
+            {
+              "suit": "diamonds",
+              "rank": 13
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jan",
+      "dealer": false,
+      "spectator": false,
+      "bankroll": 110,
+      "hands": [
+        {
+          "state": "WIN",
+          "bet": 10,
+          "cards": [
+            {
+              "suit": "spades",
+              "rank": 11
+            },
+            {
+              "suit": "spades",
+              "rank": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "spectator",
+      "dealer": false,
+      "spectator": true,
+      "bankroll": 0,
+      "hands": []
+    },
+    {
+      "name": "scoreboard-410554170",
+      "dealer": false,
+      "spectator": true,
+      "bankroll": 100,
+      "hands": []
+    },
+    {
+      "name": "DEALER",
+      "dealer": true,
+      "spectator": false,
+      "bankroll": 1100,
+      "hands": [
+        {
+          "state": "STAND",
+          "bet": null,
+          "cards": [
+            {
+              "suit": "diamonds",
+              "rank": 12
+            },
+            {
+              "suit": "spades",
+              "rank": 8
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "playerIndex": 0,
+  "handIndex": null,
+  "moves": null
+}
