@@ -199,8 +199,8 @@ class GameLoop {
                 return null;
               }
 
-              if (bet > player.bankroll()) {
-                bet = player.bankroll();
+              if (bet > player.getBankroll()) {
+                bet = player.getBankroll();
               }
 
               // Note: Nice try!
