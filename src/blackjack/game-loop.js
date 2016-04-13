@@ -168,7 +168,7 @@ class GameLoop {
                 .serializeForPlayers()
             )
             .then(bet => {
-              if (!player.isSpectator()) {
+              if (player.isSpectator()) {
                 return null;
               }
 
@@ -274,7 +274,7 @@ class GameLoop {
           )
       )
       .then(chosenAction => {
-        if (!player.isSpectator()) {
+        if (player.isSpectator()) {
           return null;
         }
 
