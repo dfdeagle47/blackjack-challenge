@@ -76,7 +76,8 @@ class GameLoop {
     return this
       .start()
       .catch(e => {
-        console.log(e, e.stack);
+        console.log('ERROR=', e, e.stack);
+        return null;
       })
       .then(() => {
         return new Promise((resolve, reject) => {
@@ -181,17 +182,12 @@ class GameLoop {
   triggerPlayersActions () {
     return Promise
       .each(
-        Array.from(
-          new Array(
-            this
-              .table
-              .playerCount({
-                spectators: false,
-                dealer: true
-              })
-          )
-          .keys()
-        ),
+        this
+          .table
+          .playerCount({
+            spectators: false,
+            dealer: true
+          }),
         (playerIndex) => {
           return this.triggerPlayerActions(playerIndex, 0);
         }

@@ -44,7 +44,7 @@ class Table {
       : this.players;
 
     players = includes.spectators !== true
-      ? players.filter(player => player.isSpectator() === false)
+      ? players.filter(player => player.isSpectator() !== true)
       : players;
 
     return players;
