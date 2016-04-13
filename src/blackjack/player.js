@@ -80,17 +80,22 @@ class Player {
   }
 
   triggerGameStart (state) {
-    return new Promise((resolve, reject) => {
-      this.onGameStart(state, function (bet) {
-        resolve((bet || {}).amount);
-      });
-    })
-    .timeout(10 * 1000);
+    if (this.isSpectator()) {
+      this.onGameStart(state, (bet) => {});
+      return Promise.resolve(null);
+    } else {
+      return new Promise((resolve, reject) => {
+        this.onGameStart(state, (bet) => {
+          resolve((bet || {}).amount);
+        });
+      })
+      .timeout(10 * 1000);
+    }
   }
 
   triggerHandActions (state) {
     return new Promise((resolve, reject) => {
-      this.onGameTurn(state, function (action) {
+      this.onGameTurn(state, (action) => {
         resolve((action || {}).move);
       });
     })
