@@ -100,6 +100,10 @@ class Table {
   givePlayerMoneyToDealerByName (name) {
     const player = this.getPlayerByName(name);
 
+    if (player === undefined) {
+      return null;
+    }
+
     this
       .getDealer()
       .addToBankroll(
