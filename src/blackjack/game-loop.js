@@ -17,14 +17,9 @@ class GameLoop {
     this.gameInterval = gameInterval;
 
     this.queuedPlayers = [];
-    this.started = false;
   }
 
   join (playerConfig, extras) {
-    if (this.started === true) {
-      return new Error('Game already started');
-    }
-
     const name = playerConfig.name;
 
     this
@@ -111,8 +106,6 @@ class GameLoop {
       return Promise.resolve(null);
     }
 
-    this.started = true;
-
     return this
       .triggerGameStart()
       .then(
@@ -123,11 +116,6 @@ class GameLoop {
       )
       .then(
         () => this.triggerGameEnd()
-      )
-      .then(
-        () => {
-          this.started = false;
-        }
       )
       .then(
         () => {
@@ -163,8 +151,6 @@ class GameLoop {
   }
 
   triggerGameStart () {
-    this.started = false;
-
     return Promise
       .mapSeries(
         this
