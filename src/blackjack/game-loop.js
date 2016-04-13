@@ -183,7 +183,16 @@ class GameLoop {
             .triggerGameStart(
               this
                 .table
-                .serializeForPlayers()
+                .serializeForPlayers(
+                  this
+                    .table
+                    .getPlayerIndexByName(
+                      player.name
+                    ),
+                  null,
+                  null,
+                  false
+                )
             )
             .then(bet => {
               if (player.isSpectator()) {
@@ -294,7 +303,8 @@ class GameLoop {
           .serializeForPlayers(
             playerIndex,
             handIndex,
-            nextActions
+            nextActions,
+            false
           )
       )
       .then(chosenAction => {
@@ -373,7 +383,11 @@ class GameLoop {
               this
                 .table
                 .serializeForPlayers(
-                  null,
+                  this
+                    .table
+                    .getPlayerIndexByName(
+                      player.name
+                    ),
                   null,
                   null,
                   true
