@@ -168,7 +168,11 @@ class GameLoop {
             )
             .then(bet => {
               // Note: Nice try!
-              if (!player.isDealer() && !player.canBetAmount(bet)) {
+              if (
+                !player.isDealer() &&
+                !player.isSpectator() &&
+                !player.canBetAmount(bet)
+              ) {
                 throw new Error('Error: ' + player.name + ' tried to bet an invalid amount `' + bet + '`');
               }
 
@@ -183,7 +187,7 @@ class GameLoop {
             })
             .catch((e) => {
               console.error('START_ERROR=', e, e.stack);
-              this.removePlayerByName(player.name);
+              this.table.removePlayerByName(player.name);
             });
         }
       );
@@ -286,7 +290,7 @@ class GameLoop {
       })
       .catch((e) => {
         console.error('ACTION_ERROR=', e, e.stack);
-        this.removePlayerByName(player.name);
+        this.table.removePlayerByName(player.name);
       });
   }
 
