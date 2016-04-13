@@ -1,7 +1,8 @@
 'use strict';
 
 var GameLoop = require('./blackjack/game-loop');
-var makePlayer = require('./human-player/index');
+var network = require('./network');
+var http = require('http');
 
 var gameLoop = new GameLoop(
   true,
@@ -10,26 +11,12 @@ var gameLoop = new GameLoop(
   100,
   2000
 );
-
-var player = makePlayer('127.0.0.1', {});
-
-gameLoop
-  .join(
-    player, {
-      spectator: false
-    }
-  );
-
-// function playLoop () {
-//   return gameLoop
-//     .start()
-//     .then(
-//       () => {
-//         return playLoop();
-//       }
-//     );
-// }
-
 gameLoop.startLoop();
 
-// playLoop();
+var server = http.createServer();
+network.createServer(server, {
+  join (player, extra) {
+    return gameLoop.join(player, extra);
+  }
+});
+server.listen(3000);
