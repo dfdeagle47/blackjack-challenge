@@ -18,3 +18,5 @@ pids
 
 ### NPM dependency directory ###
 node_modules
+
+src/scoreboard/scores*.json
