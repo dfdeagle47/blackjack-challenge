@@ -79,6 +79,19 @@ class Table {
     return this.players;
   }
 
+  getPlayerIndexByName (name) {
+    let index = -1;
+    let len = this.players.length;
+
+    while (index === -1 && len--) {
+      if (this.players[len].name === name) {
+        index = len;
+      }
+    }
+
+    return index;
+  }
+
   playerCount (includes) {
     return this.getPlayers(includes).length;
   }

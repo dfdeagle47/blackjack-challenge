@@ -184,11 +184,13 @@ class GameLoop {
       .each(
         this
           .table
-          .playerCount({
+          .getPlayers({
             spectators: false,
             dealer: true
-          }),
+          })
+          .map(player => this.table.getPlayerIndexByName(player.name)),
         (playerIndex) => {
+          console.log('playerIndex=', playerIndex);
           return this.triggerPlayerActions(playerIndex, 0);
         }
       );
