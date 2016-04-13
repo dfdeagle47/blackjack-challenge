@@ -100,6 +100,10 @@ class Table {
   givePlayerMoneyToDealerByName (name) {
     const player = this.getPlayerByName(name);
 
+    /**
+     * Note: This case comes up at the very start of the game when we remove
+     * and then create the player.
+     */
     if (player === undefined) {
       return null;
     }
