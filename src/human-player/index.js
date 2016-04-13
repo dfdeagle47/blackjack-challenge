@@ -73,6 +73,7 @@ function renderPlayer (player, isActive, handIndex) {
 
 function renderPlayers (players, playerIndex, handIndex) {
   return players
+    .map(player => player)
     .sort((a, b) => b.spectator - a.spectator)
     .map((player, index) => {
       return renderPlayer(player, index === playerIndex, handIndex);
@@ -114,18 +115,21 @@ module.exports = (name, options) => {
 
   function onGameStart (state, makeBet) {
     render('GAME START', state);
+    var me = state.players.find(player => player.name === name);
 
-    prompt = inquirer.prompt([{
-      type: 'input',
-      name: 'amount',
-      message: 'Place your bet $',
-      default: 0,
-      filter: Number
-    }]);
-    prompt.then(result => {
-      prompt = null;
-      makeBet(result);
-    });
+    if (!me.spectator) {
+      prompt = inquirer.prompt([{
+        type: 'input',
+        name: 'amount',
+        message: 'Place your bet $',
+        default: 0,
+        filter: Number
+      }]);
+      prompt.then(result => {
+        prompt = null;
+        makeBet(result);
+      });
+    }
   }
 
   function onGameTurn (state, makeMove) {
