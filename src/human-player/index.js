@@ -54,19 +54,29 @@ function renderPlayer (player, isActive, handIndex) {
   var name = player.name || 'unknown player';
   var bankroll = player.bankroll || 0;
   var hands = player.hands || [];
-  return [
-    `${renderActive(isActive)} ${name} (${renderMoney(bankroll)}):`,
-    hands.map((hand, index) => {
-      var isActiveHand = isActive && (index === handIndex);
-      return `  ${renderHand(hand, isActiveHand)}`;
-    }).join('\n')
-  ].join('\n');
+  if (player.spectator) {
+    return `${renderActive(isActive)} ${name}: ${chalk.green('spectator')}`;
+  } else {
+    var handsText = '    no hands';
+    if (hands.length > 0) {
+      handsText = hands.map((hand, index) => {
+        var isActiveHand = isActive && (index === handIndex);
+        return `  ${renderHand(hand, isActiveHand)}`;
+      }).join('\n');
+    }
+    return [
+      `${renderActive(isActive)} ${name} (${renderMoney(bankroll)}):`,
+      handsText
+    ].join('\n');
+  }
 }
 
 function renderPlayers (players, playerIndex, handIndex) {
-  return players.map((player, index) => {
-    return renderPlayer(player, index === playerIndex, handIndex);
-  }).join('\n\n');
+  return players
+    .sort((a, b) => b.spectator - a.spectator)
+    .map((player, index) => {
+      return renderPlayer(player, index === playerIndex, handIndex);
+    }).join('\n\n');
 }
 
 function renderState (state) {
