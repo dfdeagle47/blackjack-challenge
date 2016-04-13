@@ -126,8 +126,7 @@ class Table {
     player
       .getHands()
       .forEach(
-        hand => hand.setBet(0),
-        0
+        hand => hand.setBet(0)
       );
   }
 
