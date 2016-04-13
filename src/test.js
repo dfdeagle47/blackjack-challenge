@@ -10,7 +10,8 @@ function startTable (port) {
     6,
     1000,
     100,
-    250
+    250,
+    0.01
   );
   gameLoop.startLoop();
 

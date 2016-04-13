@@ -11,6 +11,7 @@ class Player {
     this.onGameTurn = playerConfig.onGameTurn;
     this.onGameEnd = playerConfig.onGameEnd;
 
+    this.minimumBet = extras.minimumBet;
     this.bankroll = extras.bankroll;
     this.spectator = !!extras.spectator;
     this.dealer = !!extras.dealer;
@@ -58,6 +59,10 @@ class Player {
     return this.bankroll;
   }
 
+  setBankroll (bankroll) {
+    return (this.bankroll = bankroll);
+  }
+
   addToBankroll (bet) {
     return (this.bankroll += bet);
   }
@@ -67,6 +72,7 @@ class Player {
       typeof bet !== 'number' ||
       isNaN(bet) ||
       bet <= 0 ||
+      bet < this.minimumBet ||
       bet > this.getBankroll()
     ) {
       return false;

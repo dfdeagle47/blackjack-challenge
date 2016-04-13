@@ -9,11 +9,12 @@ const Deck = require('./deck');
 
 class Table {
 
-  constructor (s17, numDecks, dealerBankroll, playerBankroll) {
+  constructor (s17, numDecks, dealerBankroll, playerBankroll, minimumBetPerc) {
     this.s17 = s17;
     this.deck = new Deck(numDecks);
     this.dealerBankroll = dealerBankroll;
     this.playerBankroll = playerBankroll;
+    this.minimumBet = this.playerBankroll * minimumBetPerc;
 
     this.dealer = new Player({
       name: 'DEALER',
@@ -25,6 +26,7 @@ class Table {
       },
       onGameEnd () {}
     }, {
+      minimumBet: this.minimumBet,
       bankroll: this.dealerBankroll,
       spectator: false,
       dealer: true
@@ -70,6 +72,8 @@ class Table {
   }
 
   removePlayerByName (name) {
+    this.givePlayerMoneyToDealerByName(name);
+
     this.players = this
       .players
       .filter(
@@ -80,6 +84,8 @@ class Table {
   }
 
   makePlayerSpectatorByName (name) {
+    this.givePlayerMoneyToDealerByName(name);
+
     this.players = this
       .players
       .map(
@@ -89,6 +95,23 @@ class Table {
       );
 
     return this.players;
+  }
+
+  givePlayerMoneyToDealerByName (name) {
+    const player = this.getPlayerByName(name);
+
+    this
+      .getDealer()
+      .addToBankroll(
+        player
+          .getBankroll() +
+        player
+          .getHands()
+          .reduce(
+            (sum, hand) => sum + hand.getBet(),
+            0
+          )
+      );
   }
 
   getPlayerIndexByName (name) {
@@ -111,6 +134,7 @@ class Table {
   addPlayer (playerCfg, extras) {
     const player = new Player(
       playerCfg, {
+        minimumBet: this.minimumBet,
         bankroll: this.playerBankroll,
         spectator: extras.spectator,
         dealer: false
