@@ -56,6 +56,19 @@ class Player {
     return (this.bankroll += bet);
   }
 
+  canBetAmount (bet) {
+    if (
+      typeof bet !== 'number' ||
+      isNaN(bet) ||
+      bet <= 0 ||
+      bet > this.getBankroll()
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   subtractFromBankroll (bet) {
     return (this.bankroll -= bet);
   }

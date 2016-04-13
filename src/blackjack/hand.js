@@ -112,7 +112,7 @@ class Hand {
   hasBust () {
     return this
       .getTotals()
-      .filter(total => total < 21)
+      .filter(total => total <= 21)
       .length === 0;
   }
 

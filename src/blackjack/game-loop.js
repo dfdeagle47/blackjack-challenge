@@ -76,8 +76,7 @@ class GameLoop {
     return this
       .start()
       .catch(e => {
-        console.log('ERROR=', e, e.stack);
-        return null;
+        console.error('ERROR=', e, e.stack);
       })
       .then(() => {
         return new Promise((resolve, reject) => {
@@ -168,12 +167,23 @@ class GameLoop {
                 .serializeForPlayers()
             )
             .then(bet => {
-              this
-                .table
-                .doDealFirstHand(
-                  player,
-                  bet
-                );
+              // Note: Nice try!
+              if (!player.isDealer() && !player.canBetAmount(bet)) {
+                throw new Error('Error: ' + player.name + ' tried to bet an invalid amount `' + bet + '`');
+              }
+
+              if (player.isSpectator() === false) {
+                this
+                  .table
+                  .doDealFirstHand(
+                    player,
+                    bet
+                  );
+              }
+            })
+            .catch((e) => {
+              console.error('START_ERROR=', e, e.stack);
+              this.removePlayerByName(player.name);
             });
         }
       );
@@ -187,20 +197,18 @@ class GameLoop {
           .getPlayers({
             spectators: false,
             dealer: true
-          })
-          .map(player => this.table.getPlayerIndexByName(player.name)),
-        (playerIndex) => {
-          console.log('playerIndex=', playerIndex);
-          return this.triggerPlayerActions(playerIndex, 0);
+          }),
+        (player) => {
+          return this.triggerPlayerActions(player, 0);
         }
       );
   }
 
-  triggerPlayerActions (playerIndex, handIndex) {
-    const player = this
+  triggerPlayerActions (player, handIndex) {
+    const playerIndex = this
       .table
-      .getPlayerByIndex(
-        playerIndex
+      .getPlayerIndexByName(
+        player.name
       );
 
     if (handIndex === player.handCount()) {
@@ -214,7 +222,7 @@ class GameLoop {
       )
       .then(() => {
         return this.triggerPlayerActions(
-          playerIndex,
+          player,
           handIndex + 1
         );
       });
@@ -234,7 +242,7 @@ class GameLoop {
     const nextActions = hand.getNextActions();
 
     if (hand.getState() === states.STAND) {
-      return null;
+      return Promise.resolve(null);
     }
 
     return player
@@ -250,19 +258,35 @@ class GameLoop {
       .then(chosenAction => {
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
-          chosenAction = actions.STAND;
+          throw new Error('Error: ' + player.name + ' tried to do an invalid action `' + chosenAction + '`');
         }
 
-        this.table.doAction(
-          player,
-          hand,
-          chosenAction
-        );
+        if (
+          (
+            chosenAction === actions.DOUBLE_DOWN ||
+            chosenAction === actions.SPLIT
+          ) &&
+          !player.canBetAmount(hand.getBet())
+        ) {
+          throw new Error('Error: ' + player.name + ' doesn’t have enough money to do action `' + chosenAction + '`');
+        }
 
-        return this.triggerHandActions(
-          playerIndex,
-          handIndex
-        );
+        if (player.isSpectator() === false) {
+          this.table.doAction(
+            player,
+            hand,
+            chosenAction
+          );
+
+          return this.triggerHandActions(
+            playerIndex,
+            handIndex
+          );
+        }
+      })
+      .catch((e) => {
+        console.error('ACTION_ERROR=', e, e.stack);
+        this.removePlayerByName(player.name);
       });
   }
 
