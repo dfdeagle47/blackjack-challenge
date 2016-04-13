@@ -34,12 +34,14 @@ class GameLoop {
         extras
       ]);
 
-    return this
-      .quit
-      .bind(
-        this,
-        name
-      );
+    return {
+      quit: this
+        .quit
+        .bind(
+          this,
+          name
+        )
+    };
   }
 
   swap () {
@@ -59,6 +61,8 @@ class GameLoop {
             .apply(this.table, queuedPlayer);
         }
       );
+
+    this.queuedPlayers = [];
   }
 
   quit (name) {
