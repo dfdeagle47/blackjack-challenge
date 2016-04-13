@@ -84,7 +84,7 @@ class Table {
       .players
       .map(
         player => player.getName() === name
-          ? (player.spectator = true, player)
+          ? (player.setSpectator(true), player)
           : player
       );
 

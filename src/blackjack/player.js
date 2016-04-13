@@ -28,6 +28,10 @@ class Player {
     return this.spectator === true;
   }
 
+  setSpectator (spectator) {
+    return (this.spectator = spectator);
+  }
+
   getHands () {
     return this.hands;
   }

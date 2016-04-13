@@ -168,10 +168,13 @@ class GameLoop {
                 .serializeForPlayers()
             )
             .then(bet => {
+              if (!player.isSpectator()) {
+                return null;
+              }
+
               // Note: Nice try!
               if (
                 !player.isDealer() &&
-                !player.isSpectator() &&
                 !player.canBetAmount(bet)
               ) {
                 throw new Error('Error: ' + player.name + ' tried to bet an invalid amount `' + bet + '`');
@@ -271,23 +274,25 @@ class GameLoop {
           )
       )
       .then(chosenAction => {
+        if (!player.isSpectator()) {
+          return null;
+        }
+
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
           throw new Error('Error: ' + player.name + ' tried to do an invalid action `' + chosenAction + '`');
         }
 
-        if (player.isSpectator() === false) {
-          this.table.doAction(
-            player,
-            hand,
-            chosenAction
-          );
+        this.table.doAction(
+          player,
+          hand,
+          chosenAction
+        );
 
-          return this.triggerHandActions(
-            playerIndex,
-            handIndex
-          );
-        }
+        return this.triggerHandActions(
+          playerIndex,
+          handIndex
+        );
       })
       .catch((e) => {
         console.error('ACTION_ERROR=', e, e.stack);
