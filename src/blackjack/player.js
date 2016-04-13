@@ -92,7 +92,7 @@ class Player {
     } else {
       return new Promise((resolve, reject) => {
         this.onGameStart(state, (bet) => {
-          resolve((bet || {}).amount);
+          resolve(Math.floor((bet || {}).amount));
         });
       })
       .timeout(10 * 1000);

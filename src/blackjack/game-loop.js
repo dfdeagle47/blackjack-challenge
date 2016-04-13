@@ -199,6 +199,10 @@ class GameLoop {
                 return null;
               }
 
+              if (bet > player.bankroll()) {
+                bet = player.bankroll();
+              }
+
               // Note: Nice try!
               if (
                 !player.isDealer() &&
