@@ -82,7 +82,7 @@ class Scoreboard extends EventEmitter {
             playerScore.handsWon += player.hands.filter(hand => hand.state === 'WIN').length;
             playerScore.handsDraw += player.hands.filter(hand => hand.state === 'DRAW').length;
             playerScore.handsLost += player.hands.filter(hand => hand.state === 'LOSE').length;
-            playerScore.handsSplit += player.hands.length - 1;
+            playerScore.handsSplit += Math.max(player.hands.length - 1, 0);
           });
         board.emit('update', board.scores);
       }

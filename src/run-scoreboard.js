@@ -5,12 +5,7 @@ var cliClear = require('cli-clear');
 var myScoreboard = scoreboard();
 
 [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://localhost:3003',
-  'http://localhost:3004',
-  'http://localhost:3005'
+  'http://localhost:3000'
 ].forEach(endpoint => {
   var player = myScoreboard.getSpectator();
   network.createClient(endpoint).join(player, { spectator: true });
