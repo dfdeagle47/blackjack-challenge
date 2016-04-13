@@ -80,7 +80,7 @@ class Player {
   triggerGameStart (state) {
     return new Promise((resolve, reject) => {
       this.onGameStart(state, function (bet) {
-        resolve(bet.amount);
+        resolve((bet || {}).amount);
       });
     });
   }
@@ -88,7 +88,7 @@ class Player {
   triggerHandActions (state) {
     return new Promise((resolve, reject) => {
       this.onGameTurn(state, function (action) {
-        resolve(action.move);
+        resolve((action || {}).move);
       });
     });
   }
