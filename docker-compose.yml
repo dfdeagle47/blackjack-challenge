@@ -1,0 +1,18 @@
+version: '2'
+services:
+  node:
+    image: woorank/blackjack-challenge
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        build_number: $CI_BUILD_NUMBER
+    env_file:
+      - ./env/.env
+    ports:
+      - 14670:3000
+    volumes:
+      - ./package.json:/opt/app/package.json
+      - ./src:/opt/app/src
+      - ./test:/opt/app/test
+    command: npm start

@@ -2,14 +2,30 @@
 
 class Player {
 
-  constructor (playerConfig, extra) {
+  constructor (playerConfig, extras) {
     this.name = playerConfig.name;
+
     this.onGameStart = playerConfig.onGameStart;
     this.onGameTurn = playerConfig.onGameTurn;
     this.onGameEnd = playerConfig.onGameEnd;
-    this.bankroll = extra.bankroll;
-    this.dealer = !!extra.dealer;
+
+    this.bankroll = extras.bankroll;
+    this.spectator = !!extras.spectator;
+    this.dealer = !!extras.dealer;
+
     this.hands = [];
+  }
+
+  getName () {
+    return this.name;
+  }
+
+  isDealer () {
+    return this.dealer === true;
+  }
+
+  isSpectator () {
+    return this.spectator === true;
   }
 
   getHands () {
@@ -68,7 +84,8 @@ class Player {
   serializeForPlayers (isEnd) {
     return {
       name: this.name,
-      dealer: this.dealer,
+      dealer: this.isDealer(),
+      spectator: this.isSpectator(),
       bankroll: this.bankroll,
       hands: this
         .hands

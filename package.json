@@ -1,25 +1,19 @@
 {
   "name": "blackjack-challenge",
+  "private": true,
   "version": "1.0.0",
-  "description": "Blackjack challenge",
-  "main": "index.js",
+  "description": "Blackjack dealer for the JavaScript Coding Battle.",
+  "main": "./src/server.js",
+  "engines": {
+    "node": "~4.2.6"
+  },
   "scripts": {
-    "test": "mocha ./test"
+    "ci": "npm run security && npm run lint && npm runt test",
+    "lint": "semistandard --verbose | snazzy",
+    "security": "snyk wizard",
+    "start": "node ./src/server.js",
+    "test": "mocha --recursive test/"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Woorank/blackjack-challenge.git"
-  },
-  "keywords": [
-    "blackjack",
-    "challenge"
-  ],
-  "author": "WooRank",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Woorank/blackjack-challenge/issues"
-  },
-  "homepage": "https://github.com/Woorank/blackjack-challenge",
   "dependencies": {
     "bluebird": "^3.3.4",
     "chalk": "^1.1.3",
@@ -29,6 +23,18 @@
     "socket.io-client": "^1.4.5"
   },
   "devDependencies": {
-    "mocha": "^2.4.5"
-  }
+    "mocha": "^2.4.5",
+    "snyk": "~1.13.2",
+    "snazzy": "~3.0.0",
+    "semistandard": "~7.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Woorank/blackjack-challenge"
+  },
+  "author": "Woorank (https://github.com/Woorank)",
+  "bugs": {
+    "url": "https://github.com/Woorank/blackjack-challenge/issues"
+  },
+  "homepage": "https://github.com/Woorank/blackjack-challenge"
 }

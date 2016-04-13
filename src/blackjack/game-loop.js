@@ -7,24 +7,81 @@ const Table = require('./table');
 
 class GameLoop {
 
-  constructor (s17, numDecks, dealerBankroll, playerBankroll) {
+  constructor (s17, numDecks, dealerBankroll, playerBankroll, gameInterval) {
     this.table = new Table(
       s17,
       numDecks,
       dealerBankroll,
       playerBankroll
     );
+    this.gameInterval = gameInterval;
+
+    this.queuedPlayers = [];
+    this.started = false;
   }
 
-  join (player) {
+  join (playerConfig, extras) {
     if (this.started === true) {
       return new Error('Game already started');
     }
 
-    this.table.addPlayer(player);
+    const name = playerConfig.name;
+
+    this
+      .table
+      .addPlayer(playerConfig, extras);
+
+    return this
+      .quit
+      .bind(
+        this,
+        name
+      );
+  }
+
+  quit (name) {
+    this
+      .table
+      .removePlayerByName(name);
+
+    this.queuedPlayers = this
+      .queuedPlayers
+      .filter(
+        queuedPlayer => queuedPlayer.name !== name
+      );
+  }
+
+  startLoop () {
+    return this.start
+      .catch(e => {
+        console.log(e, e.stack);
+      })
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          setTimeout(
+            () => {
+              resolve(
+                this.startLoop()
+              );
+            },
+            this.gameInterval
+          );
+        });
+      });
   }
 
   start () {
+    const playerCount = this
+      .table
+      .playerCount({
+        spectators: false,
+        dealer: false
+      });
+
+    if (playerCount === 0) {
+      return null;
+    }
+
     this.started = true;
 
     return this
@@ -69,15 +126,11 @@ class GameLoop {
       )
       .then(
         () => {
-          if (this.table.deck.cardCount() > this.table.deck.numDecks * 52 * 0.5) {
-            this.table.deck.generateAndShuffle();
+          if (this.table.deck.shouldShuffle()) {
+            this.table.deck.shuffle();
           }
         }
-      )
-      .catch(e => {
-        console.log(e, e.stack);
-        process.exit(1);
-      });
+      );
   }
 
   triggerGameStart () {
@@ -87,7 +140,10 @@ class GameLoop {
       .mapSeries(
         this
           .table
-          .players,
+          .getPlayers({
+            spectators: true,
+            dealer: true
+          }),
         player => {
           return player
             .triggerGameStart(
@@ -114,7 +170,10 @@ class GameLoop {
           new Array(
             this
               .table
-              .playerCount()
+              .playerCount({
+                spectators: false,
+                dealer: true
+              })
           )
           .keys()
         ),
@@ -200,7 +259,10 @@ class GameLoop {
 
     this
       .table
-      .getPlayers()
+      .getPlayers({
+        spectators: false,
+        dealer: false
+      })
       .forEach(
         player => {
           player
@@ -226,7 +288,10 @@ class GameLoop {
       .map(
         this
           .table
-          .players,
+          .getPlayers({
+            spectators: true,
+            dealer: true
+          }),
         player => {
           return player
             .triggerGameEnd(

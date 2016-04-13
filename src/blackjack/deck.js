@@ -7,28 +7,28 @@ class Deck {
   constructor (numDecks) {
     this.numDecks = numDecks;
     this.cards = [];
+    this.index = 0;
 
-    this.generateAndShuffle();
-  }
-
-  generateAndShuffle () {
-    this.cards = this.shuffle(
-      this.generate(
-        this.numDecks
-      )
+    this.cards = this.generate(
+      this.numDecks
     );
+    this.shuffle();
   }
 
   popCard () {
-    return this.cards.pop();
+    const card = this.cards[this.index];
+    this.index += 1;
+
+    return card;
   }
 
   cardCount () {
-    return this.cards.length;
+    return this.cards.length - this.index;
   }
 
   generate (numDecks) {
     const cards = [];
+    this.index = 0;
 
     for (let i = 1; i <= 52 * numDecks; i++) {
       cards.push(
@@ -39,8 +39,15 @@ class Deck {
     return cards;
   }
 
-  shuffle (cards) {
-    return this.doFisherYatesShuffle(cards);
+  shouldShuffle () {
+    return this.index > this.cardCount() / 2;
+  }
+
+  shuffle () {
+    this.cards = this.doFisherYatesShuffle(
+      this.cards
+    );
+    this.index = 0;
   }
 
   doFisherYatesShuffle (cards) {

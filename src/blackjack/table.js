@@ -26,6 +26,7 @@ class Table {
       onGameEnd () {}
     }, {
       bankroll: this.dealerBankroll,
+      spectator: false,
       dealer: true
     });
 
@@ -37,8 +38,16 @@ class Table {
     this.handIndex = 0;
   }
 
-  getPlayers () {
-    return this.players.slice(0, -1);
+  getPlayers (includes) {
+    let players = includes.dealer !== true
+      ? this.players.slice(0, -1)
+      : this.players;
+
+    players = includes.spectators !== true
+      ? players.filter(player => player.isSpectator() === false)
+      : players;
+
+    return players;
   }
 
   getDealer () {
@@ -49,12 +58,40 @@ class Table {
     return this.players[index];
   }
 
-  playerCount () {
-    return this.players.length;
+  getPlayerByName (name) {
+    return this
+      .getPlayers({
+        spectator: true,
+        dealer: false
+      })
+      .filter(
+        player => player.getName() === name
+      )[0];
   }
 
-  addPlayer (playerCfg) {
-    const player = new Player(playerCfg, { bankroll: this.playerBankroll });
+  removePlayerByName (name) {
+    this.players = this
+      .players
+      .filter(
+        player => player.getName() !== name
+      );
+
+    return this.players;
+  }
+
+  playerCount (includes) {
+    return this.getPlayers(includes).length;
+  }
+
+  addPlayer (playerCfg, extras) {
+    const player = new Player(
+      playerCfg, {
+        bankroll: this.playerBankroll,
+        spectator: extras.spectator,
+        dealer: false
+      }
+    );
+
     return (this.players.unshift(player), player);
   }
 
@@ -169,6 +206,13 @@ class Table {
       dealer.addToBankroll(
         playerHand.getBet()
       );
+    } else if (playerHand.hasBust()) {
+      playerHand.setState(
+          states.LOSE
+      );
+      dealer.addToBankroll(
+        playerHand.getBet()
+      );
     } else if (dealerHand.hasBust()) {
       playerHand.setState(
           states.WIN
@@ -178,13 +222,6 @@ class Table {
       );
       dealer.addToBankroll(
         -1 * playerHand.getBet()
-      );
-    } else if (playerHand.hasBust()) {
-      playerHand.setState(
-          states.LOSE
-      );
-      dealer.addToBankroll(
-        playerHand.getBet()
       );
     } else if (playerHandTotal > dealerHandTotal) {
       playerHand.setState(
@@ -216,7 +253,10 @@ class Table {
   serializeForPlayers (playerIndex, handIndex, nextActions, isEnd) {
     return {
       players: this
-        .players
+        .getPlayers({
+          spectators: true,
+          dealer: true
+        })
         .map(
           player => player.serializeForPlayers(isEnd)
         ),
@@ -229,18 +269,21 @@ class Table {
   checksumTable () {
     return (
       this
-      .getPlayers()
+      .getPlayers({
+        spectators: false,
+        dealer: false
+      })
       .reduce(
         (bankrollSum, player) => {
           return bankrollSum + player.getBankroll();
         },
         0
-      ) +
-      this
-        .getDealer()
-        .getBankroll()
+      ) + this.getDealer().getBankroll()
     ) === (
-      (this.playerCount() - 1) * this.playerBankroll +
+      this.playerCount({
+        spectators: false,
+        dealer: false
+      }) * this.playerBankroll +
       this.dealerBankroll
     );
   }
