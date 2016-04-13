@@ -120,6 +120,15 @@ class Table {
             0
           )
       );
+
+    player.setBankroll(0);
+
+    player
+      .getHands()
+      .forEach(
+        hand => hand.setBet(0),
+        0
+      );
   }
 
   getPlayerIndexByName (name) {
