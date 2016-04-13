@@ -319,6 +319,10 @@ class GameLoop {
           playerIndex,
           handIndex
         );
+      })
+      .catch((e) => {
+        console.error('HAND_ACTION_ERROR=', e, e.stack);
+        this.table.makePlayerSpectatorByName(player.name);
       });
   }
 

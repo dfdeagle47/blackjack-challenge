@@ -1,5 +1,7 @@
 'use strict';
 
+const Promise = require('bluebird');
+
 class Player {
 
   constructor (playerConfig, extras) {
@@ -82,7 +84,8 @@ class Player {
       this.onGameStart(state, function (bet) {
         resolve((bet || {}).amount);
       });
-    });
+    })
+    .timeout(10 * 1000);
   }
 
   triggerHandActions (state) {
@@ -90,7 +93,8 @@ class Player {
       this.onGameTurn(state, function (action) {
         resolve((action || {}).move);
       });
-    });
+    })
+    .timeout(10 * 1000);
   }
 
   triggerGameEnd (state) {
