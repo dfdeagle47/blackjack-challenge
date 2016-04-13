@@ -22,6 +22,8 @@ class GameLoop {
   join (playerConfig, extras) {
     const name = playerConfig.name;
 
+    console.log('[JOIN] Player', name, 'joined');
+
     this
       .queuedPlayers
       .push([
@@ -61,6 +63,8 @@ class GameLoop {
   }
 
   quit (name) {
+    console.log('[JOIN] Player', name, 'quit');
+
     this
       .table
       .removePlayerByName(name);
@@ -114,6 +118,8 @@ class GameLoop {
       return Promise.resolve(null);
     }
 
+    console.log('[START] New game started');
+
     return this
       .triggerGameStart()
       .then(
@@ -160,6 +166,8 @@ class GameLoop {
   }
 
   triggerGameStart () {
+    console.log('[GAME_START_TRIGGER] Game start trigger');
+
     return Promise
       .mapSeries(
         this
@@ -169,6 +177,8 @@ class GameLoop {
             dealer: true
           }),
         player => {
+          console.log('[GAME_START_TRIGGER] Game start trigger triggered for', player.name);
+
           return player
             .triggerGameStart(
               this
@@ -188,14 +198,14 @@ class GameLoop {
                 throw new Error('Error: ' + player.name + ' tried to bet an invalid amount `' + bet + '`');
               }
 
-              if (player.isSpectator() === false) {
-                this
-                  .table
-                  .doDealFirstHand(
-                    player,
-                    bet
-                  );
-              }
+              console.log('[GAME_START_TRIGGER] Player', player.name, 'bet', bet);
+
+              this
+                .table
+                .doDealFirstHand(
+                  player,
+                  bet
+                );
             })
             .catch((e) => {
               console.error('START_ERROR=', e, e.stack);
@@ -206,6 +216,8 @@ class GameLoop {
   }
 
   triggerPlayersActions () {
+    console.log('[PLAYERS_ACTIONS_TRIGGER] Players actions trigger');
+
     return Promise
       .each(
         this
@@ -221,6 +233,8 @@ class GameLoop {
   }
 
   triggerPlayerActions (player, handIndex) {
+    console.log('[PLAYER_ACTIONS_TRIGGER] Players actions trigger for', player.name);
+
     const playerIndex = this
       .table
       .getPlayerIndexByName(
@@ -245,6 +259,8 @@ class GameLoop {
   }
 
   triggerHandActions (playerIndex, handIndex) {
+    console.log('[HAND_ACTIONS_TRIGGER] Players actions trigger for', player.name, 'and hand', handIndex);
+
     const player = this
       .table
       .getPlayerByIndex(
@@ -288,8 +304,10 @@ class GameLoop {
 
         // Note: Nice try!
         if (nextActions.indexOf(chosenAction) === -1) {
-          throw new Error('Error: ' + player.name + ' tried to do an invalid action `' + chosenAction + '`');
+          chosenAction = actions.STAND;
         }
+
+        console.log('[HAND_ACTIONS_TRIGGER] Player', player.name, 'chose to do action', chosenAction);
 
         this.table.doAction(
           player,
@@ -301,10 +319,6 @@ class GameLoop {
           playerIndex,
           handIndex
         );
-      })
-      .catch((e) => {
-        console.error('ACTION_ERROR=', e, e.stack);
-        this.table.makePlayerSpectatorByName(player.name);
       });
   }
 
@@ -339,6 +353,8 @@ class GameLoop {
   }
 
   triggerGameEnd () {
+    console.log('[GAME_START_TRIGGER] Game end trigger');
+
     return Promise
       .map(
         this
