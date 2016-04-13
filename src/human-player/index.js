@@ -73,6 +73,7 @@ function renderPlayer (player, isActive, handIndex) {
 
 function renderPlayers (players, playerIndex, handIndex) {
   return players
+    .map(player => player)
     .sort((a, b) => b.spectator - a.spectator)
     .map((player, index) => {
       return renderPlayer(player, index === playerIndex, handIndex);
