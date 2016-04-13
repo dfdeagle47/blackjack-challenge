@@ -93,7 +93,15 @@ class GameLoop {
   }
 
   start () {
+    console.log('PRE_SWAP');
+    console.log('player_count=', this.table.playerCount({ spectators: false, dealer: false }));
+    console.log('queued_player_count=', this.queuedPlayers.length);
+
     this.swap();
+
+    console.log('POST_SWAP');
+    console.log('player_count=', this.table.playerCount({ spectators: false, dealer: false }));
+    console.log('queued_player_count=', this.queuedPlayers.length);
 
     const playerCount = this
       .table
