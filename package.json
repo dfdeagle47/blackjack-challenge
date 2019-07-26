@@ -24,7 +24,8 @@
     "inquirer": "^1.0.0",
     "level": "^1.4.0",
     "socket.io": "^1.4.5",
-    "socket.io-client": "^1.4.5"
+    "socket.io-client": "^1.4.5",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "mocha": "^2.4.5",

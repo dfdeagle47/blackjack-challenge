@@ -89,7 +89,7 @@
       ]
     }
   ],
-  "playerIndex": 0,
-  "handIndex": null,
+  "playerIndex": 0, //your player index
+  "handIndex": null, //Which hand affected
   "moves": null
 }

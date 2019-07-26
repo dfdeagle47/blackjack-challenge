@@ -1,0 +1,7 @@
+Human
+Ace 1 or 11
+
+
+Dealer
+- Until 17
+- 17 + ace => take another card
